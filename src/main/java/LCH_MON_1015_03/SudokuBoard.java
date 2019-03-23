@@ -5,6 +5,16 @@ import java.util.Random;
 
 public class SudokuBoard {
 
+    class Pair {
+        public int x;
+        public int y;
+
+        Pair (int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+    }
+
     private int[][] board;
 
     SudokuBoard() {
@@ -16,9 +26,12 @@ public class SudokuBoard {
         }
     }
 
-    public int[][] getBoard()
-    {
-        return board;
+    public int get(int x, int y){
+        return board[x][y];
+    }
+
+    public void set(int x, int y, int value){
+        board[x][y] = value;
     }
 
     void fillSudoku() {
@@ -78,32 +91,6 @@ public class SudokuBoard {
             }
         }
         return false;
-
-    }
-
-    public boolean solveSudoku() {
-
-        if (!areThereZeros()) return true;
-
-        for (int x = 0; x < 9; x++) {
-            for (int y = 0; y < 9; y++) {
-
-
-                if (board[x][y] == 0) {
-
-                    for (int i = 1; i < 10; i++) {
-                        if (checkIfNumberFits(x, y, i)) {
-                            board[x][y] = i;
-                            if (!solveSudoku()) board[x][y] = 0;
-                            else return true;
-                        }
-                    }
-                    board[x][y] = 0;
-                    return false;
-                }
-            }
-        }
-        return false;
     }
 
     public boolean checkIfNumberFits(int x, int y, int num) {
@@ -122,7 +109,7 @@ public class SudokuBoard {
         return true;
     }
 
-    private boolean areThereZeros() {
+    public boolean areThereZeros() {
         for (int x = 0; x < 9; x++) {
             for (int y = 0; y < 9; y++) {
                 if (board[x][y] == 0) return true;
