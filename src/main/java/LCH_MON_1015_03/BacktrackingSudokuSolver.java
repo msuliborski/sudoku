@@ -13,8 +13,9 @@ public class BacktrackingSudokuSolver implements SudokuSolver {
 
                 if (board.get(x, y) == 0) {
                     for (int i = 1; i < 10; i++) {
-                        if (board.checkIfNumberFits(x, y, i)) {
-                            board.set(x, y, i);
+                        board.set(x, y, i);
+                        if (board.checkIfNumberFits()) {
+
                             if (!solveSudoku(board)) board.set(x, y, 0);
                             else return true;
                         }

@@ -15,23 +15,47 @@ public class SudokuBoard {
         }
     }
 
-    private int[][] board;
+    private SudokuField[][] board = new SudokuField[9][9];
+    private SudokuBox[] boxes = new SudokuBox[9];
+    private SudokuColumn[] columns = new SudokuColumn[9];
+    private SudokuRow[] rows = new SudokuRow[9];
 
     SudokuBoard() {
-        board = new int[9][9];
+        for(int i=0; i<9; i++) {
+            columns[i] = new SudokuColumn();
+            boxes[i] = new SudokuBox();
+            rows[i] = new SudokuRow();
+        }
         for (int x = 0; x < 9; x++) {
+
             for (int y = 0; y < 9; y++) {
-                board[x][y] = 0;
+                board[x][y] = new SudokuField();
+                board[x][y].setFieldValue(0);
+
+                rows[y].addField(board[x][y]);
+                columns[x].addField(board[x][y]);
+            }
+        }
+        int boxNum = 0;
+        for(int x=0;x<9;x+=3) {
+            for(int y=0;y<9;y+=3) {
+
+                for (int i = 0; i < 3; i++) {
+                    for (int j = 0; j < 3; j++) {
+                        boxes[boxNum].addField(board[x+i][y+j]);
+                    }
+                }
+                boxNum++;
             }
         }
     }
 
     public int get(int x, int y){
-        return board[x][y];
+        return board[x][y].getFieldValue();
     }
 
     public void set(int x, int y, int value){
-        board[x][y] = value;
+        board[x][y].setFieldValue(value);
     }
 
     void fillSudoku() {
@@ -55,7 +79,7 @@ public class SudokuBoard {
             int x = list.get(index).x;
             int y = list.get(index).y;
 
-            board[x][y] = 0;
+            board[x][y].setFieldValue(0);
 
             list.remove(index);
         }
@@ -69,7 +93,7 @@ public class SudokuBoard {
         for (int x = 0; x < 9; x++) {
             for (int y = 0; y < 9; y++) {
 
-                if (board[x][y] == 0) {
+                if (board[x][y].getFieldValue() == 0) {
                     var list = new ArrayList<Integer>(10);
                     for (int i = 1; i < 10; i++)
                         list.add(i);
@@ -79,13 +103,14 @@ public class SudokuBoard {
                         int index = rand.nextInt(list.size());
                         int i = list.get(index);
                         list.remove(index);
-                        if (checkIfNumberFits(x, y, i)) {
-                            board[x][y] = i;
-                            if (!randomSolveSudoku()) board[x][y] = 0;
+                        board[x][y].setFieldValue(i);
+                        if (checkIfNumberFits()) {
+
+                            if (!randomSolveSudoku()) board[x][y].setFieldValue(0);
                             else return true;
                         }
                     }
-                    board[x][y] = 0;
+                    board[x][y].setFieldValue(0);
                     return false;
                 }
             }
@@ -93,26 +118,19 @@ public class SudokuBoard {
         return false;
     }
 
-    public boolean checkIfNumberFits(int x, int y, int num) {
-        for (int i = 0; i < board.length; i++) {
-            if ((board[x][i] == num && i != y) || (board[i][y] == num && i != x)) return false;
+    public boolean checkIfNumberFits() {
+        boolean test = false;
+        for(int i=0;i<9;i++) {
+            if(columns[i].verify() && rows[i].verify() && boxes[i].verify()) test = true;
+            else return false;
         }
-        int newRow = (x / 3) * 3;
-        int newColumn = (y / 3) * 3;
-
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                if ((board[newRow + i][newColumn + j] == num) && newRow + i != x && newColumn + j != y)
-                    return false;
-            }
-        }
-        return true;
+        return test;
     }
 
     public boolean areThereZeros() {
         for (int x = 0; x < 9; x++) {
             for (int y = 0; y < 9; y++) {
-                if (board[x][y] == 0) return true;
+                if (board[x][y].getFieldValue() == 0) return true;
             }
         }
         return false;
@@ -123,7 +141,7 @@ public class SudokuBoard {
         System.out.println("---------------------------------");
         for (int x = 0; x < 9; x++) {
             for (int y = 0; y < 9; y++) {
-                System.out.print(board[x][y] + " ");
+                System.out.print(board[x][y].getFieldValue() + " ");
                 if (y % 3 == 2 && y != 8) System.out.print("| ");
             }
             System.out.println();
