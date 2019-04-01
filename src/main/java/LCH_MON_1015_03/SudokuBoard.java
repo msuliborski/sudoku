@@ -9,7 +9,7 @@ public class SudokuBoard {
         public int x;
         public int y;
 
-        Pair (int x, int y) {
+        Pair(int x, int y) {
             this.x = x;
             this.y = y;
         }
@@ -21,7 +21,7 @@ public class SudokuBoard {
     private SudokuRow[] rows = new SudokuRow[9];
 
     SudokuBoard() {
-        for(int i=0; i<9; i++) {
+        for (int i = 0; i < 9; i++) {
             columns[i] = new SudokuColumn();
             boxes[i] = new SudokuBox();
             rows[i] = new SudokuRow();
@@ -37,12 +37,12 @@ public class SudokuBoard {
             }
         }
         int boxNum = 0;
-        for(int x=0;x<9;x+=3) {
-            for(int y=0;y<9;y+=3) {
+        for (int x = 0; x < 9; x += 3) {
+            for (int y = 0; y < 9; y += 3) {
 
                 for (int i = 0; i < 3; i++) {
                     for (int j = 0; j < 3; j++) {
-                        boxes[boxNum].addField(board[x+i][y+j]);
+                        boxes[boxNum].addField(board[x + i][y + j]);
                     }
                 }
                 boxNum++;
@@ -50,11 +50,11 @@ public class SudokuBoard {
         }
     }
 
-    public int get(int x, int y){
+    public int get(int x, int y) {
         return board[x][y].getFieldValue();
     }
 
-    public void set(int x, int y, int value){
+    public void set(int x, int y, int value) {
         board[x][y].setFieldValue(value);
     }
 
@@ -120,8 +120,8 @@ public class SudokuBoard {
 
     public boolean checkIfNumberFits() {
         boolean test = false;
-        for(int i=0;i<9;i++) {
-            if(columns[i].verify() && rows[i].verify() && boxes[i].verify()) test = true;
+        for (int i = 0; i < 9; i++) {
+            if (columns[i].verify() && rows[i].verify() && boxes[i].verify()) test = true;
             else return false;
         }
         return test;
