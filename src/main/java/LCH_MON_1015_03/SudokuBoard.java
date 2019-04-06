@@ -18,24 +18,24 @@ public class SudokuBoard {
     }
 
     private List<List<SudokuField>> board = new ArrayList<>(9);
-    private SudokuBox[] boxes = new SudokuBox[9];
-    private SudokuColumn[] columns = new SudokuColumn[9];
-    private SudokuRow[] rows = new SudokuRow[9];
+    private List<SudokuBox> boxes = new ArrayList<>(9);
+    private List<SudokuColumn> columns = new ArrayList<>(9);
+    private List<SudokuRow> rows = new ArrayList<>(9);
 
     SudokuBoard() {
         for (int i = 0; i < 9; i++) {
             board.add(new ArrayList<>(9));
-            columns[i] = new SudokuColumn();
-            boxes[i] = new SudokuBox();
-            rows[i] = new SudokuRow();
+            columns.add(new SudokuColumn());
+            boxes.add(new SudokuBox());
+            rows.add(new SudokuRow());
         }
         for (int x = 0; x < 9; x++) {
             for (int y = 0; y < 9; y++) {
                 board.get(x).add(new SudokuField());
 //                board[x][y] = new SudokuField();
 
-                rows[y].addField(board.get(x).get(y));
-                columns[x].addField(board.get(x).get(y));
+                rows.get(y).addField(board.get(x).get(y));
+                columns.get(x).addField(board.get(x).get(y));
             }
         }
         int boxNum = 0;
@@ -44,7 +44,7 @@ public class SudokuBoard {
 
                 for (int i = 0; i < 3; i++) {
                     for (int j = 0; j < 3; j++) {
-                        boxes[boxNum].addField(board.get(x + i).get(y + j));
+                        boxes.get(boxNum).addField(board.get(x + i).get(y + j));
                     }
                 }
                 boxNum++;
@@ -123,7 +123,7 @@ public class SudokuBoard {
     public boolean checkIfNumberFits() {
         boolean test = false;
         for (int i = 0; i < 9; i++) {
-            if (columns[i].verify() && rows[i].verify() && boxes[i].verify()) test = true;
+            if (columns.get(i).verify() && rows.get(i).verify() && boxes.get(i).verify()) test = true;
             else return false;
         }
         return test;
