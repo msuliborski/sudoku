@@ -1,4 +1,4 @@
-package LCH_MON_1015_03;
+package sudoku;
 
 public interface SudokuSolver {
     public boolean solveSudoku(SudokuBoard board);

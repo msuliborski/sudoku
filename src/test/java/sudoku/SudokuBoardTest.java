@@ -1,4 +1,4 @@
-package LCH_MON_1015_03;
+package sudoku;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -63,10 +63,4 @@ public class SudokuBoardTest {
         assertNotEquals(boardstring1.toString(), boardstring2.toString());
 
     }
-
-
-    /*
-    * fillBoard generates correct digits layout (check all rows, columns and boxes)
-two subsequent calls of fillBoard generates different digits layout on the board
-*/
 }

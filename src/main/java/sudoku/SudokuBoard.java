@@ -1,7 +1,6 @@
-package LCH_MON_1015_03;
+package sudoku;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 
@@ -18,11 +17,14 @@ public class SudokuBoard {
     }
 
     private List<List<SudokuField>> board = new ArrayList<>(9);
-    private List<SudokuBox> boxes = new ArrayList<>(9);
-    private List<SudokuColumn> columns = new ArrayList<>(9);
-    private List<SudokuRow> rows = new ArrayList<>(9);
+    private List<Verifier> verifier = new ArrayList<>(27);
 
     SudokuBoard() {
+
+        var boxes = new ArrayList<SudokuBox>(9);
+        var columns = new ArrayList<SudokuColumn>(9);
+        var rows = new ArrayList<SudokuRow>(9);
+
         for (int i = 0; i < 9; i++) {
             board.add(new ArrayList<>(9));
             columns.add(new SudokuColumn());
@@ -32,7 +34,6 @@ public class SudokuBoard {
         for (int x = 0; x < 9; x++) {
             for (int y = 0; y < 9; y++) {
                 board.get(x).add(new SudokuField());
-//                board[x][y] = new SudokuField();
 
                 rows.get(y).addField(board.get(x).get(y));
                 columns.get(x).addField(board.get(x).get(y));
@@ -50,6 +51,9 @@ public class SudokuBoard {
                 boxNum++;
             }
         }
+        verifier.addAll(boxes);
+        verifier.addAll(columns);
+        verifier.addAll(rows);
     }
 
     public int get(int x, int y) {
@@ -61,7 +65,8 @@ public class SudokuBoard {
     }
 
     void fillSudoku() {
-        this.randomSolveSudoku();
+        SudokuSolver solver = new BacktrackingSudokuSolver();
+        solver.solveSudoku(this);
         this.randomNumbersRemove();
     }
 
@@ -88,51 +93,22 @@ public class SudokuBoard {
     }
 
 
-    boolean randomSolveSudoku() {
-
-        if (!areThereZeros()) return true;
-
-        for (int x = 0; x < 9; x++) {
-            for (int y = 0; y < 9; y++) {
-
-                if (board.get(x).get(y).getFieldValue() == 0) {
-                    var list = new ArrayList<Integer>(10);
-                    for (int i = 1; i < 10; i++)
-                        list.add(i);
-
-                    Random rand = new Random();
-                    while (list.size() > 0) {
-                        int index = rand.nextInt(list.size());
-                        int i = list.get(index);
-                        list.remove(index);
-                        board.get(x).get(y).setFieldValue(i);
-                        if (checkIfNumberFits()) {
-
-                            if (!randomSolveSudoku()) board.get(x).get(y).setFieldValue(0);
-                            else return true;
-                        }
-                    }
-                    board.get(x).get(y).setFieldValue(0);
-                    return false;
-                }
+    public boolean verify() {
+        for (Verifier v : verifier) {
+            if (!v.verify()) {
+                return false;
             }
         }
-        return false;
-    }
 
-    public boolean checkIfNumberFits() {
-        boolean test = false;
-        for (int i = 0; i < 9; i++) {
-            if (columns.get(i).verify() && rows.get(i).verify() && boxes.get(i).verify()) test = true;
-            else return false;
-        }
-        return test;
+        return true;
     }
 
     public boolean areThereZeros() {
         for (int x = 0; x < 9; x++) {
             for (int y = 0; y < 9; y++) {
-                if (board.get(x).get(y).getFieldValue() == 0) return true;
+                if (board.get(x).get(y).getFieldValue() == 0) {
+                    return true;
+                }
             }
         }
         return false;
@@ -144,10 +120,14 @@ public class SudokuBoard {
         for (int x = 0; x < 9; x++) {
             for (int y = 0; y < 9; y++) {
                 System.out.print(board.get(x).get(y).getFieldValue() + " ");
-                if (y % 3 == 2 && y != 8) System.out.print("| ");
+                if (y % 3 == 2 && y != 8) {
+                    System.out.print("| ");
+                }
             }
             System.out.println();
-            if (x % 3 == 2 && x != 8) System.out.println("- - - - - - - - - - -");
+            if (x % 3 == 2 && x != 8) {
+                System.out.println("- - - - - - - - - - -");
+            }
         }
         System.out.println("---------------------------------");
         System.out.println();

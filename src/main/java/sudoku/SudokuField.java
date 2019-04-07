@@ -1,8 +1,8 @@
-package LCH_MON_1015_03;
+package sudoku;
 
 public class SudokuField {
 
-    SudokuField(){
+    SudokuField() {
         this.value = 0;
     }
 

@@ -1,7 +1,7 @@
-package LCH_MON_1015_03;
+package sudoku;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
 
         SudokuBoard sudoku = new SudokuBoard();
 

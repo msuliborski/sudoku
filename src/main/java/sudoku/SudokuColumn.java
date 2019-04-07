@@ -1,4 +1,4 @@
-package LCH_MON_1015_03;
+package sudoku;
 
 public class SudokuColumn extends Verifier {
 }
