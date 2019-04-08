@@ -1,8 +1,6 @@
 package sudoku;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class SudokuBoard {
 
@@ -27,6 +25,7 @@ public class SudokuBoard {
 
         for (int i = 0; i < 9; i++) {
             board.add(new ArrayList<>(9));
+            //fixed.add(Array.asList(new SudokuField()[9]))
             columns.add(new SudokuColumn());
             boxes.add(new SudokuBox());
             rows.add(new SudokuRow());
@@ -54,6 +53,16 @@ public class SudokuBoard {
         verifier.addAll(boxes);
         verifier.addAll(columns);
         verifier.addAll(rows);
+
+        for (int i = 0; i < 9; i++) {
+            board.set(i, Collections.unmodifiableList(board.get(i)));
+        }
+        board = Collections.unmodifiableList(board);
+
+        verifier = Collections.unmodifiableList(verifier);
+
+        //verifier.add(new SudokuColumn());
+        //board.get(1).add(new SudokuField());
     }
 
     public int get(int x, int y) {
@@ -111,7 +120,31 @@ public class SudokuBoard {
                 }
             }
         }
+
         return false;
+    }
+
+
+    @Override
+    public String toString(){
+        StringBuilder sb = new StringBuilder();
+        sb.append("\n");
+        sb.append("---------------------------------");
+        for (int x = 0; x < 9; x++) {
+            for (int y = 0; y < 9; y++) {
+                sb.append(board.get(x).get(y).getFieldValue()).append(" ");
+                if (y % 3 == 2 && y != 8) {
+                    sb.append("| ");
+                }
+            }
+            System.out.println();
+            if (x % 3 == 2 && x != 8) {
+                sb.append("- - - - - - - - - - -\n");
+            }
+        }
+        sb.append("---------------------------------");
+        sb.append("\n");
+        return sb.toString();
     }
 
     public void display() {
