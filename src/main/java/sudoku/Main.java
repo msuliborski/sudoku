@@ -11,7 +11,7 @@ public class Main {
         System.out.println("Sudoku to solve:");
         System.out.println();
 
-        sudoku.display();
+        System.out.println(sudoku.toString());
 
         System.out.println();
         System.out.println("Now we are solving sudoku...");
@@ -24,7 +24,7 @@ public class Main {
         System.out.println("Here is solved sudoku:");
         System.out.println();
 
-        sudoku.display();
+        System.out.println(sudoku.toString());
 
     }
 }

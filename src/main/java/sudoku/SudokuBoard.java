@@ -25,7 +25,6 @@ public class SudokuBoard {
 
         for (int i = 0; i < 9; i++) {
             board.add(new ArrayList<>(9));
-            //fixed.add(Array.asList(new SudokuField()[9]))
             columns.add(new SudokuColumn());
             boxes.add(new SudokuBox());
             rows.add(new SudokuRow());
@@ -60,9 +59,6 @@ public class SudokuBoard {
         board = Collections.unmodifiableList(board);
 
         verifier = Collections.unmodifiableList(verifier);
-
-        //verifier.add(new SudokuColumn());
-        //board.get(1).add(new SudokuField());
     }
 
     public int get(int x, int y) {
@@ -126,43 +122,58 @@ public class SudokuBoard {
 
 
     @Override
-    public String toString(){
+    public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("\n");
-        sb.append("---------------------------------");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("---------------------------------").append(System.getProperty("line.separator"));
         for (int x = 0; x < 9; x++) {
             for (int y = 0; y < 9; y++) {
-                sb.append(board.get(x).get(y).getFieldValue()).append(" ");
+                sb.append(board.get(x).get(y).toString()).append(" ");
                 if (y % 3 == 2 && y != 8) {
                     sb.append("| ");
                 }
             }
-            System.out.println();
+            sb.append(System.getProperty("line.separator"));
             if (x % 3 == 2 && x != 8) {
-                sb.append("- - - - - - - - - - -\n");
+                sb.append("- - - - - - - - - - -").append(System.getProperty("line.separator"));
             }
         }
         sb.append("---------------------------------");
-        sb.append("\n");
+        sb.append(System.getProperty("line.separator"));
         return sb.toString();
     }
 
-    public void display() {
-        System.out.println();
-        System.out.println("---------------------------------");
+
+    @Override
+    public int hashCode() {
+        int result = 17;
+        result = 31 * result + board.hashCode();
+        result = 31 * result + verifier.hashCode();
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+
+        if (o == null) {
+            return false;
+        }
+        if (!(o instanceof SudokuBoard)) {
+            return false;
+        }
+
+        SudokuBoard s = (SudokuBoard) o;
+
         for (int x = 0; x < 9; x++) {
             for (int y = 0; y < 9; y++) {
-                System.out.print(board.get(x).get(y).getFieldValue() + " ");
-                if (y % 3 == 2 && y != 8) {
-                    System.out.print("| ");
+                if (!this.board.get(x).get(y).equals(s.board.get(x).get(y))) {
+                    return false;
                 }
             }
-            System.out.println();
-            if (x % 3 == 2 && x != 8) {
-                System.out.println("- - - - - - - - - - -");
-            }
         }
-        System.out.println("---------------------------------");
-        System.out.println();
+        return true;
     }
 }
