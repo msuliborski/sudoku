@@ -1,16 +1,22 @@
 package sudoku;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Verifier {
 
-    public void addField(final SudokuField field) {
-        fields.add(field);
-    }
-
     private List<SudokuField> fields = new ArrayList<>();
+    private int addCounter = 0;
 
+    public void addField(final SudokuField field) {
+        if (addCounter == 9) {
+            fields = Collections.unmodifiableList(fields);
+        } else {
+            fields.add(field);
+        }
+        addCounter++;
+    }
 
     public boolean verify() {
         for (int i = 0; i < 8; i++) {
