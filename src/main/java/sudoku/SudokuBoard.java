@@ -2,9 +2,10 @@ package sudoku;
 
 import com.google.common.base.Objects;
 
+import java.io.Serializable;
 import java.util.*;
 
-public class SudokuBoard {
+public class SudokuBoard implements Serializable {
 
     class Pair {
         public int x;

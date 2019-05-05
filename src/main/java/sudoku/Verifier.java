@@ -2,11 +2,12 @@ package sudoku;
 
 import com.google.common.base.Objects;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Verifier {
+public class Verifier implements Serializable {
 
     private List<SudokuField> fields = new ArrayList<>();
     private int addCounter = 0;

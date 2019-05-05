@@ -3,13 +3,21 @@ package sudoku;
 public class Main {
     public static void main(final String[] args) {
 
+        FileSudokuBoardDao file = new FileSudokuBoardDao("objects");
+
         SudokuBoard sudoku = new SudokuBoard();
+//
+//        sudoku.fillSudoku();
+//
+//        System.out.println();
+//        System.out.println("Sudoku to solve:");
+//        System.out.println();
+//
+//        System.out.println(sudoku.toString());
+//
+//
 
-        sudoku.fillSudoku();
-
-        System.out.println();
-        System.out.println("Sudoku to solve:");
-        System.out.println();
+        sudoku = file.read();
 
         System.out.println(sudoku.toString());
 
