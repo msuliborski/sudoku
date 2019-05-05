@@ -1,5 +1,7 @@
 package sudoku;
 
+import com.google.common.base.Objects;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -54,5 +56,10 @@ public class Verifier {
             }
         }
         return true;
+    }
+
+    @Override
+    public int hashCode(){
+        return Objects.hashCode(fields, addCounter);
     }
 }

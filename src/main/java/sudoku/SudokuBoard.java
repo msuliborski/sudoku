@@ -1,5 +1,7 @@
 package sudoku;
 
+import com.google.common.base.Objects;
+
 import java.util.*;
 
 public class SudokuBoard {
@@ -146,10 +148,7 @@ public class SudokuBoard {
 
     @Override
     public int hashCode() {
-        int result = 17;
-        result = 31 * result + board.hashCode();
-        result = 31 * result + verifier.hashCode();
-        return result;
+        return Objects.hashCode(board, verifier);
     }
 
     @Override

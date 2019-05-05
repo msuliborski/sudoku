@@ -1,5 +1,7 @@
 package sudoku;
 
+import com.google.common.base.Objects;
+
 public class SudokuField {
 
     private int value;
@@ -23,9 +25,7 @@ public class SudokuField {
 
     @Override
     public int hashCode(){
-        int result = 17;
-        result = 31 * result + value;
-        return result;
+        return Objects.hashCode(value);
     }
 
     @Override
