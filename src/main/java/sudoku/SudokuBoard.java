@@ -1,5 +1,7 @@
 package sudoku;
 
+import com.google.common.base.Objects;
+
 import java.util.*;
 
 public class SudokuBoard {
@@ -59,9 +61,6 @@ public class SudokuBoard {
         board = Collections.unmodifiableList(board);
 
         verifier = Collections.unmodifiableList(verifier);
-
-        //verifier.add(new SudokuColumn());
-        //board.get(1).add(new SudokuField());
     }
 
     public int get(int x, int y) {
@@ -125,7 +124,7 @@ public class SudokuBoard {
 
 
     @Override
-    public String toString(){
+    public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(System.getProperty("line.separator"));
         sb.append("---------------------------------").append(System.getProperty("line.separator"));
@@ -149,19 +148,21 @@ public class SudokuBoard {
 
     @Override
     public int hashCode() {
-        int result = 17;
-        result = 31 * result + board.hashCode();
-        result = 31 * result + verifier.hashCode();
-        return result;
+
+        return Objects.hashCode(board, verifier);
     }
 
     @Override
-    public boolean equals(Object o){
+    public boolean equals(Object o) {
+
         if (o == this) {
             return true;
         }
 
-        if (!(o instanceof SudokuBoard)){
+        if (o == null) {
+            return false;
+        }
+        if (!(o instanceof SudokuBoard)) {
             return false;
         }
 
@@ -169,7 +170,9 @@ public class SudokuBoard {
 
         for (int x = 0; x < 9; x++) {
             for (int y = 0; y < 9; y++) {
-                if (!this.board.get(x).get(y).equals(s.board.get(x).get(y))){
+
+                if (!this.board.get(x).get(y).equals(s.board.get(x).get(y))) {
+
                     return false;
                 }
             }

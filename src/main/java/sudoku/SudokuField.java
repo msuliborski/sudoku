@@ -1,5 +1,7 @@
 package sudoku;
 
+import com.google.common.base.Objects;
+
 public class SudokuField {
 
     private int value;
@@ -17,24 +19,26 @@ public class SudokuField {
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return String.valueOf(this.value);
     }
 
     @Override
-    public int hashCode(){
-        int result = 17;
-        result = 31 * result + value;
-        return result;
+    public int hashCode() {
+        return Objects.hashCode(value);
     }
 
     @Override
-    public boolean equals(Object o){
-        if (o == this){
+    public boolean equals(Object o) {
+        if (o == this) {
             return true;
         }
 
-        if (!(o instanceof SudokuField)){
+        if (o == null) {
+            return false;
+        }
+
+        if (!(o instanceof SudokuField)) {
             return false;
         }
 
