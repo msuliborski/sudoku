@@ -3,9 +3,11 @@ package sudoku;
 public class Main {
     public static void main(final String[] args) {
 
-        FileSudokuBoardDao file = new FileSudokuBoardDao("objects");
+        SudokuBoardDaoFactory factory = new SudokuBoardDaoFactory();
 
-        SudokuBoard sudoku = new SudokuBoard();
+        FileSudokuBoardDao file = (FileSudokuBoardDao) factory.getFileDao("objects");
+
+        SudokuBoard sudoku;
 //
 //        sudoku.fillSudoku();
 //
@@ -15,7 +17,7 @@ public class Main {
 //
 //        System.out.println(sudoku.toString());
 //
-//
+
 
         sudoku = file.read();
 

@@ -63,4 +63,25 @@ public class SudokuBoardTest {
         assertNotEquals(boardstring1.toString(), boardstring2.toString());
 
     }
+
+    @org.junit.jupiter.api.Test
+    void testIfSerializationWorks() {
+
+        SudokuBoardDaoFactory factory = new SudokuBoardDaoFactory();
+
+        FileSudokuBoardDao file = (FileSudokuBoardDao) factory.getFileDao("sudoku");
+
+        SudokuBoard sudoku = new SudokuBoard();
+        sudoku.fillSudoku();
+
+        System.out.println(sudoku.toString());
+
+        file.write(sudoku);
+
+        SudokuBoard sudokuFromFile = file.read();
+
+        System.out.println(sudokuFromFile.toString());
+        assertEquals(sudoku, sudokuFromFile);
+
+    }
 }
