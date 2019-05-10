@@ -10,9 +10,9 @@
         <version>0.5</version>
     </parent>
 
-    <groupId>LCH_MON_1015_03</groupId>
+    <groupId>pl.comp.model</groupId>
     <artifactId>ModelProject</artifactId>
-    <version>0.2</version>
+    <version>0.5</version>
     <packaging>jar</packaging>
 
     <repositories>
