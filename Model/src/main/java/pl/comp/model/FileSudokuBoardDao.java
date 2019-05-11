@@ -1,4 +1,4 @@
-package sudoku;
+package pl.comp.model;
 
 import java.io.*;
 

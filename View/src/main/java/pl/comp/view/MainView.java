@@ -1,25 +1,20 @@
 package pl.comp.view;
 
-import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.layout.StackPane;
+import javafx.fxml.Initializable;
 import javafx.stage.Stage;
 
-public class MainView extends Application {
+import java.net.URL;
+import java.util.ResourceBundle;
 
+public class MainView implements Initializable {
+
+    private Stage stage;
     @Override
-    public void start(Stage stage) {
-        String javaVersion = System.getProperty("java.version");
-        String javafxVersion = System.getProperty("javafx.version");
-        Label l = new Label("Hello, JavaFX " + javafxVersion + ", running on Java " + javaVersion + ".");
-        Scene scene = new Scene(new StackPane(l), 640, 480);
-        stage.setScene(scene);
-        stage.show();
-    }
+    public void initialize(URL url, ResourceBundle resourceBundle) {
 
-    public static void main(String[] args) {
-        launch();
+    }
+    public void setStage(Stage stage) {
+        this.stage = stage;
     }
 
 }

@@ -1,4 +1,5 @@
-package sudoku;
+package pl.comp.model;
+
 
 import static org.junit.jupiter.api.Assertions.*;
 

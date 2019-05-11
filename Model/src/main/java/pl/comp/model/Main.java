@@ -1,4 +1,4 @@
-package sudoku;
+package pl.comp.model;
 
 public class Main {
     public static void main(final String[] args) {
@@ -7,19 +7,20 @@ public class Main {
 
         FileSudokuBoardDao file = (FileSudokuBoardDao) factory.getFileDao("objects");
 
-        SudokuBoard sudoku;
-//
-//        sudoku.fillSudoku();
-//
-//        System.out.println();
-//        System.out.println("Sudoku to solve:");
-//        System.out.println();
-//
-//        System.out.println(sudoku.toString());
-//
+        SudokuBoard sudoku = new SudokuBoard();
+        
+
+        sudoku.fillSudoku();
+
+        System.out.println();
+        System.out.println("Sudoku to solve:");
+        System.out.println();
+
+        System.out.println(sudoku.toString());
 
 
-        sudoku = file.read();
+
+//        sudoku = file.read();
 
         System.out.println(sudoku.toString());
 
