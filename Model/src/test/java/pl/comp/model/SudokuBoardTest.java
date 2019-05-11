@@ -15,7 +15,7 @@ public class SudokuBoardTest {
     void testIfFillBoardGeneratesCorrectDigitsLayout() {
         SudokuBoard sudoku = new SudokuBoard();
 
-        sudoku.fillSudoku();
+        sudoku.fillSudoku(2);
 
         boolean test = false;
 
@@ -47,14 +47,14 @@ public class SudokuBoardTest {
         StringBuilder boardstring1 = new StringBuilder();
         StringBuilder boardstring2 = new StringBuilder();
 
-        sudoku.fillSudoku();
+        sudoku.fillSudoku(2);
         for (int x = 0; x < 9; x++) {
             for (int y = 0; y < 9; y++) {
                 boardstring1.append(sudoku.get(x, y));
             }
         }
 
-        sudoku.fillSudoku();
+        sudoku.fillSudoku(2);
         for (int x = 0; x < 9; x++) {
             for (int y = 0; y < 9; y++) {
                 boardstring2.append(sudoku.get(x, y));
@@ -73,7 +73,7 @@ public class SudokuBoardTest {
         FileSudokuBoardDao file = (FileSudokuBoardDao) factory.getFileDao("sudoku");
 
         SudokuBoard sudoku = new SudokuBoard();
-        sudoku.fillSudoku();
+        sudoku.fillSudoku(2);
 
         System.out.println(sudoku.toString());
 

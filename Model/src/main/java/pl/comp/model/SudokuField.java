@@ -4,9 +4,10 @@ import com.google.common.base.Objects;
 
 import java.io.Serializable;
 
-public class SudokuField implements Serializable {
+public class SudokuField implements Serializable, Comparable<SudokuField>, Cloneable {
 
     private int value;
+    private boolean isDefault = true;
 
     SudokuField() {
         this.value = 0;
@@ -18,6 +19,14 @@ public class SudokuField implements Serializable {
 
     public void setFieldValue(int value) {
         this.value = value;
+    }
+
+    public boolean isDefault() {
+        return isDefault;
+    }
+
+    public void setDefault(boolean aDefault) {
+        isDefault = aDefault;
     }
 
     @Override
@@ -49,5 +58,14 @@ public class SudokuField implements Serializable {
         return s.value == this.value;
     }
 
+    @Override
+    public int compareTo(SudokuField field) {
+        return Integer.compare(field.value, value);
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException{
+        return super.clone();
+    }
 
 }

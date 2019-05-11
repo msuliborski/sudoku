@@ -10,7 +10,7 @@ public class Main {
         SudokuBoard sudoku = new SudokuBoard();
         
 
-        sudoku.fillSudoku();
+        sudoku.fillSudoku(2);
 
         System.out.println();
         System.out.println("Sudoku to solve:");

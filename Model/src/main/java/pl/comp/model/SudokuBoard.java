@@ -4,7 +4,7 @@ import com.google.common.base.Objects;
 import java.io.Serializable;
 import java.util.*;
 
-public class SudokuBoard implements Serializable {
+public class SudokuBoard implements Serializable, Cloneable {
 
     class Pair {
         public int x;
@@ -17,10 +17,21 @@ public class SudokuBoard implements Serializable {
     }
 
     private List<List<SudokuField>> board = new ArrayList<>(9);
-    private List<Verifier> verifier = new ArrayList<>(27);
+    private List<Verifier> verifiers = new ArrayList<>(27);
+    private int difficulty;
 
-    SudokuBoard() {
+    public SudokuBoard() {
+        initialize();
+    }
 
+    public SudokuBoard(int diff) {
+        //zabezpiecz, tylko wart 1-3
+        this.difficulty = diff;
+        initialize();
+        fillSudoku(difficulty);
+    }
+
+    private void initialize(){
         var boxes = new ArrayList<SudokuBox>(9);
         var columns = new ArrayList<SudokuColumn>(9);
         var rows = new ArrayList<SudokuRow>(9);
@@ -51,34 +62,46 @@ public class SudokuBoard implements Serializable {
                 boxNum++;
             }
         }
-        verifier.addAll(boxes);
-        verifier.addAll(columns);
-        verifier.addAll(rows);
+        verifiers.addAll(boxes);
+        verifiers.addAll(columns);
+        verifiers.addAll(rows);
 
         for (int i = 0; i < 9; i++) {
             board.set(i, Collections.unmodifiableList(board.get(i)));
         }
         board = Collections.unmodifiableList(board);
 
-        verifier = Collections.unmodifiableList(verifier);
+        verifiers = Collections.unmodifiableList(verifiers);
     }
 
     public int get(int x, int y) {
         return board.get(x).get(y).getFieldValue();
     }
 
+    public boolean isFieldDefault(int x, int y){
+        return board.get(x).get(y).isDefault();
+    }
+
+    public void setFieldDefault(int x, int y, boolean def){
+        board.get(x).get(y).setDefault(def);
+    }
+
     public void set(int x, int y, int value) {
         board.get(x).get(y).setFieldValue(value);
     }
 
-    void fillSudoku() {
+    void fillSudoku(int difficulty) {
         SudokuSolver solver = new BacktrackingSudokuSolver();
         solver.solveSudoku(this);
-        this.randomNumbersRemove();
+        switch (difficulty){
+            case 1: this.randomNumbersRemove(20); break;
+            case 3: this.randomNumbersRemove(60); break;
+            default: this.randomNumbersRemove(40);
+        }
     }
 
-    private void randomNumbersRemove() {
-        ArrayList<Pair> list = new ArrayList<Pair>(81);
+    private void randomNumbersRemove(int amount) {
+        ArrayList<Pair> list = new ArrayList<>();
         for (int x = 0; x < 9; x++) {
             for (int y = 0; y < 9; y++) {
                 list.add(new Pair(x, y));
@@ -87,13 +110,14 @@ public class SudokuBoard implements Serializable {
 
         Random rand = new Random();
 
-        for (int i = 0; i < 51; i++) {
-            int index = rand.nextInt(list.size());
+        for (int i = 0; i < amount; i++) {
+            int index = rand.nextInt(list.size()-1);
 
             int x = list.get(index).x;
             int y = list.get(index).y;
 
             board.get(x).get(y).setFieldValue(0);
+            board.get(x).get(y).setDefault(false);
 
             list.remove(index);
         }
@@ -101,7 +125,7 @@ public class SudokuBoard implements Serializable {
 
 
     public boolean verify() {
-        for (Verifier v : verifier) {
+        for (Verifier v : verifiers) {
             if (!v.verify()) {
                 return false;
             }
@@ -149,7 +173,7 @@ public class SudokuBoard implements Serializable {
     @Override
     public int hashCode() {
 
-        return Objects.hashCode(board, verifier);
+        return Objects.hashCode(board, verifiers);
     }
 
     @Override
@@ -178,5 +202,22 @@ public class SudokuBoard implements Serializable {
             }
         }
         return true;
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        SudokuBoard sudokuBoard = (SudokuBoard) super.clone();
+
+        for (int x = 0; x < 9; x++) {
+            for (int y = 0; y < 9; y++) {
+                sudokuBoard.board.get(x).set(y, (SudokuField) this.board.get(x).get(y).clone());
+            }
+        }
+
+        for (int i = 0; i < 9; i++) {
+            sudokuBoard.verifiers.set(i, (Verifier) this.verifiers.get(i).clone());
+        }
+
+        return sudokuBoard;
     }
 }

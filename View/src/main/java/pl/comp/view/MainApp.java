@@ -22,18 +22,13 @@ public class MainApp extends Application {
     public void start(Stage stage) throws Exception {
         URL location = getClass().getResource("/pl/comp/view/MainView.fxml");
         FXMLLoader fxmlLoader = new FXMLLoader(location);
-        Parent root = fxmlLoader.load();
-        Scene scene = new Scene(root);
+        Parent parent = fxmlLoader.load();
+        Scene scene = new Scene(parent/*, 600, 100*/);
         stage.setTitle("Sudoku Game");
         stage.setScene(scene);
         MainView controller = fxmlLoader.getController();
         controller.setStage(stage);
         stage.show();
-
-//        Parent root = FXMLLoader.load(getClass().getResource("/pl/comp/view/MainView.fxml"));
-//        stage.setTitle("Hello World");
-//        stage.setScene(new Scene(root, 300, 275));
-//        stage.show();
     }
 
     public static void main(String[] args) {
