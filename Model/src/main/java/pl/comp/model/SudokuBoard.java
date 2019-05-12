@@ -1,7 +1,8 @@
 package pl.comp.model;
 
 import com.google.common.base.Objects;
-import java.io.Serializable;
+
+import java.io.*;
 import java.util.*;
 
 public class SudokuBoard implements Serializable, Cloneable {
@@ -206,18 +207,37 @@ public class SudokuBoard implements Serializable, Cloneable {
 
     @Override
     public Object clone() throws CloneNotSupportedException {
-        SudokuBoard sudokuBoard = (SudokuBoard) super.clone();
+//        SudokuBoard sudokuBoard = (SudokuBoard) super.clone();
+//
+//        for (int x = 0; x < 9; x++) {
+//            for (int y = 0; y < 9; y++) {
+//                sudokuBoard.board.get(x).set(y, (SudokuField) this.board.get(x).get(y).clone());
+//            }
+//        }
+//
+//        for (int i = 0; i < 9; i++) {
+//            sudokuBoard.verifiers.set(i, (Verifier) this.verifiers.get(i).clone());
+//        }
+//
+//        return sudokuBoard;
 
-        for (int x = 0; x < 9; x++) {
-            for (int y = 0; y < 9; y++) {
-                sudokuBoard.board.get(x).set(y, (SudokuField) this.board.get(x).get(y).clone());
-            }
+        byte[] object;
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+             ObjectOutputStream oos = new ObjectOutputStream(baos);) {
+            oos.writeObject(this);
+            object = baos.toByteArray();
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+            return null;
         }
 
-        for (int i = 0; i < 9; i++) {
-            sudokuBoard.verifiers.set(i, (Verifier) this.verifiers.get(i).clone());
+        try (ByteArrayInputStream bais = new ByteArrayInputStream(object);
+             ObjectInputStream ois = new ObjectInputStream(bais);) {
+            SudokuBoard clone = (SudokuBoard) ois.readObject();
+            return (SudokuBoard) clone;
+        } catch (IOException | ClassNotFoundException cnfe) {
+            cnfe.printStackTrace();
+            return null;
         }
-
-        return sudokuBoard;
     }
 }

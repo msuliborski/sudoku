@@ -85,4 +85,19 @@ public class SudokuBoardTest {
         assertEquals(sudoku, sudokuFromFile);
 
     }
+    @org.junit.jupiter.api.Test
+    void testIfCloneWorks() {
+
+        SudokuBoard sudokuBoard= new SudokuBoard(1);
+        SudokuBoard sudokuBoardClone = null;
+        try {
+            sudokuBoardClone = (SudokuBoard) sudokuBoard.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+
+        assertEquals(sudokuBoard, sudokuBoardClone);
+
+
+    }
 }

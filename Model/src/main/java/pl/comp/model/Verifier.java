@@ -2,7 +2,7 @@ package pl.comp.model;
 
 import com.google.common.base.Objects;
 
-import java.io.Serializable;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -69,11 +69,32 @@ public class Verifier implements Serializable, Cloneable {
 
     @Override
     public Object clone() throws CloneNotSupportedException {
-        Verifier field = (Verifier) super.clone();
-        for(int i = 0; i < this.fields.size(); i++){
-            field.fields.add((SudokuField) this.fields.get(i).clone());
+//        Verifier field = (Verifier) super.clone();
+//        for(int i = 0; i < this.fields.size(); i++){
+//            field.fields.add((SudokuField) this.fields.get(i).clone());
+//        }
+//        return field;
+
+        byte[] object;
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+             ObjectOutputStream oos = new ObjectOutputStream(baos)) {
+            oos.writeObject(this);
+            object = baos.toByteArray();
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+            return null;
         }
-        return field;
+
+        try (ByteArrayInputStream bais = new ByteArrayInputStream(object);
+             ObjectInputStream ois = new ObjectInputStream(bais);) {
+
+            Verifier clone = (Verifier) ois.readObject();
+            return clone;
+        } catch (IOException | ClassNotFoundException cnfe) {
+            cnfe.printStackTrace();
+            return null;
+        }
+
     }
 
 }
