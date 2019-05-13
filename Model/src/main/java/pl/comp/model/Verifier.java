@@ -48,14 +48,14 @@ public class Verifier implements Serializable, Cloneable {
             return false;
         }
 
-        if (!(o instanceof SudokuField)) {
+        if (!(o instanceof Verifier)) {
             return false;
         }
 
         Verifier v = (Verifier) o;
 
-        for (int i = 0; i < 8; i++) {
-            if (!v.fields.get(0).equals(this.fields.get(i))) {
+        for (int i = 0; i < 9; i++) {
+            if (!v.fields.get(i).equals(this.fields.get(i))) {
                 return false;
             }
         }
@@ -68,7 +68,17 @@ public class Verifier implements Serializable, Cloneable {
     }
 
     @Override
-    public Object clone() throws CloneNotSupportedException {
+    public String toString(){
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0; i < 9; i++){
+            sb.append(fields.get(i));
+        }
+        sb.append(", counter = ").append(addCounter);
+        return sb.toString();
+    }
+
+    @Override
+    public Object clone() {
 //        Verifier field = (Verifier) super.clone();
 //        for(int i = 0; i < this.fields.size(); i++){
 //            field.fields.add((SudokuField) this.fields.get(i).clone());
@@ -88,8 +98,7 @@ public class Verifier implements Serializable, Cloneable {
         try (ByteArrayInputStream bais = new ByteArrayInputStream(object);
              ObjectInputStream ois = new ObjectInputStream(bais);) {
 
-            Verifier clone = (Verifier) ois.readObject();
-            return clone;
+            return ois.readObject();
         } catch (IOException | ClassNotFoundException cnfe) {
             cnfe.printStackTrace();
             return null;

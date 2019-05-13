@@ -72,32 +72,23 @@ public class SudokuBoardTest {
 
         FileSudokuBoardDao file = (FileSudokuBoardDao) factory.getFileDao("sudoku");
 
-        SudokuBoard sudoku = new SudokuBoard();
-        sudoku.fillSudoku(2);
-
-        System.out.println(sudoku.toString());
+        SudokuBoard sudoku = new SudokuBoard(2);
 
         file.write(sudoku);
 
         SudokuBoard sudokuFromFile = file.read();
 
-        System.out.println(sudokuFromFile.toString());
         assertEquals(sudoku, sudokuFromFile);
 
     }
+
     @org.junit.jupiter.api.Test
     void testIfCloneWorks() {
 
-        SudokuBoard sudokuBoard= new SudokuBoard(1);
-        SudokuBoard sudokuBoardClone = null;
-        try {
-            sudokuBoardClone = (SudokuBoard) sudokuBoard.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
+        SudokuBoard sudokuBoard1 = new SudokuBoard(1);
+        SudokuBoard sudokuBoard2 = (SudokuBoard) sudokuBoard1.clone();
 
-        assertEquals(sudokuBoard, sudokuBoardClone);
-
-
+        assertNotSame(sudokuBoard1, sudokuBoard2);
+        assertEquals(sudokuBoard1, sudokuBoard2);
     }
 }

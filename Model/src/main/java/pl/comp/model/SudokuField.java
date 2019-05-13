@@ -13,6 +13,10 @@ public class SudokuField implements Serializable, Comparable<SudokuField>, Clone
         this.value = 0;
     }
 
+    SudokuField(int val) {
+        this.value = val;
+    }
+
     public int getFieldValue() {
         return value;
     }
