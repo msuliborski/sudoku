@@ -3,16 +3,16 @@ package pl.comp.view;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextFormatter;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import pl.comp.model.BacktrackingSudokuSolver;
 import pl.comp.model.SudokuBoard;
+import pl.comp.model.SudokuBoardDaoFactory;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +26,16 @@ public class MainView implements Initializable {
     //Scene elements
     public GridPane grid;
     public Button verifyButton;
+    public Menu newGame;
+    public MenuItem startEasy;
+    public MenuItem startMedium;
+    public MenuItem startHard;
+    public Menu file;
+    public MenuItem save;
+    public MenuItem load;
+    public Menu language;
     private List<List<TextField>> boardTextFields = new ArrayList<>();
+    private static boolean isEnglish = true;
 
     //private
 
@@ -89,7 +98,7 @@ public class MainView implements Initializable {
         for (int x = 0; x < 9; x++)
             for (int y = 0; y < 9; y++) {
                 sudokuBoard.set(x, y, Integer.parseInt("0" + boardTextFields.get(y).get(x).getText()));
-                if(boardTextFields.get(y).get(x).isEditable()) sudokuBoard.setFieldDefault(x, y, false);
+                if (boardTextFields.get(y).get(x).isEditable()) sudokuBoard.setFieldDefault(x, y, false);
             }
     }
 
@@ -108,7 +117,10 @@ public class MainView implements Initializable {
     public void startGame(int difficulty) {
         sudokuBoard = new SudokuBoard(difficulty);
         this.updateGridView();
-        verifyButton.setText("VERIFY");
+        if (isEnglish)
+            verifyButton.setText("VERIFY");
+        else
+            verifyButton.setText("SPRAWDŹ");
         verifyButton.setTextFill(Color.BLACK);
     }
 
@@ -116,18 +128,90 @@ public class MainView implements Initializable {
         if (sudokuBoard != null) {
             updateSudokuBoard();
             if (sudokuBoard.verify() && !sudokuBoard.areThereZeros()) {
-                verifyButton.setText("CORRECT!");
+                if (isEnglish)
+                    verifyButton.setText("CORRECT!");
+                else
+                    verifyButton.setText("DOBRZE!");
                 verifyButton.setTextFill(Color.GREEN);
             } else if (sudokuBoard.verify()) {
-                verifyButton.setText("NO LOGIC ERRORS!");
+                if (isEnglish)
+                    verifyButton.setText("NO LOGIC ERRORS!");
+                else
+                    verifyButton.setText("BRAK BŁĘDÓW!");
                 verifyButton.setTextFill(Color.BLUE);
             } else {
-                verifyButton.setText("WRONG!");
+                if (isEnglish)
+                    verifyButton.setText("WRONG!");
+                else
+                    verifyButton.setText("ŹLE!");
                 verifyButton.setTextFill(Color.RED);
             }
         } else {
-            verifyButton.setText("START NEW GAME FROM THE MENU ABOVE!");
+            if (isEnglish)
+                verifyButton.setText("START NEW GAME FROM THE MENU ABOVE!");
+            else
+                verifyButton.setText("ZACZNIJ NOWĄ GRĘ Z MENU NA GÓRZE!");
             verifyButton.setTextFill(Color.RED);
+        }
+    }
+
+    public void saveGame() {
+        SudokuBoardDaoFactory factory = new SudokuBoardDaoFactory();
+        updateSudokuBoard();
+        if (sudokuBoard != null) {
+            factory.getFileDao("sudoku").write(sudokuBoard);
+        }
+    }
+
+    public void loadGame() throws IOException {
+        SudokuBoardDaoFactory factory = new SudokuBoardDaoFactory();
+        sudokuBoard = (SudokuBoard) factory.getFileDao("sudoku").read();
+        updateGridView();
+    }
+
+    public void changeLanguage() {
+        isEnglish = !isEnglish;
+        updateNames();
+    }
+
+    void updateNames() {
+        String text = verifyButton.getText();
+
+        if(isEnglish) {
+            newGame.setText("New Game");
+            startEasy.setText("Easy");
+            startMedium.setText("Medium");
+            startHard.setText("Hard");
+            file.setText("File");
+            save.setText("Save");
+            load.setText("Load");
+            language.setText("Language");
+
+            switch (text) {
+                case "SPRAWDŹ!": verifyButton.setText("VERIFY!"); break;
+                case "DOBRZE!": verifyButton.setText("CORRECT!"); break;
+                case "BRAK BŁĘDÓW!": verifyButton.setText("NO LOGIC ERRORS!"); break;
+                case "ŹLE!": verifyButton.setText("WRONG!"); break;
+                case "ZACZNIJ NOWĄ GRĘ Z MENU NA GÓRZE!": verifyButton.setText("START NEW GAME FROM THE MENU ABOVE!"); break;
+            }
+        }
+        else
+        {
+            newGame.setText("Nowa gra");
+            startEasy.setText("Łatwa");
+            startMedium.setText("Średnia");
+            startHard.setText("Trudna");
+            file.setText("Plik");
+            save.setText("Zapisz");
+            load.setText("Wczytaj");
+            language.setText("Język");
+            switch (text) {
+                case "VERIFY!": verifyButton.setText("SPRAWDŹ!"); break;
+                case "CORRECT!": verifyButton.setText("DOBRZE!"); break;
+                case "NO LOGIC ERRORS!": verifyButton.setText("BRAK BŁĘDÓW!"); break;
+                case "WRONG!": verifyButton.setText("ŹLE!"); break;
+                case "START NEW GAME FROM THE MENU ABOVE!": verifyButton.setText("ZACZNIJ NOWĄ GRĘ Z MENU NA GÓRZE!"); break;
+            }
         }
     }
 }
