@@ -86,9 +86,18 @@ public class SudokuBoardTest {
     void testIfCloneWorks() {
 
         SudokuBoard sudokuBoard1 = new SudokuBoard(1);
+        int help = sudokuBoard1.get(0, 0);
+        sudokuBoard1.set(0, 0, 0);
         SudokuBoard sudokuBoard2 = (SudokuBoard) sudokuBoard1.clone();
 
         assertNotSame(sudokuBoard1, sudokuBoard2);
         assertEquals(sudokuBoard1, sudokuBoard2);
+
+
+        sudokuBoard1.set(0, 0, help);
+
+
+        assertNotSame(sudokuBoard1, sudokuBoard2);
+        assertNotEquals(sudokuBoard1, sudokuBoard2);
     }
 }
