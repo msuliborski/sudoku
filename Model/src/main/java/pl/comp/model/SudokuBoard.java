@@ -223,7 +223,7 @@ public class SudokuBoard implements Serializable, Cloneable {
 
         byte[] object;
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
-             ObjectOutputStream oos = new ObjectOutputStream(baos);) {
+             ObjectOutputStream oos = new ObjectOutputStream(baos)) {
             oos.writeObject(this);
             object = baos.toByteArray();
         } catch (IOException ioe) {
@@ -232,7 +232,7 @@ public class SudokuBoard implements Serializable, Cloneable {
         }
 
         try (ByteArrayInputStream bais = new ByteArrayInputStream(object);
-             ObjectInputStream ois = new ObjectInputStream(bais);) {
+             ObjectInputStream ois = new ObjectInputStream(bais)) {
             SudokuBoard clone = (SudokuBoard) ois.readObject();
             return clone;
         } catch (IOException | ClassNotFoundException cnfe) {
