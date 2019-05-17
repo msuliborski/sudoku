@@ -14,6 +14,8 @@ import pl.comp.model.BacktrackingSudokuSolver;
 import pl.comp.model.SudokuBoard;
 
 import java.net.URL;
+import java.text.DecimalFormat;
+import java.text.ParsePosition;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -40,6 +42,8 @@ public class MainView implements Initializable {
         for (int i = 0; i < 9; i++)
             boardTextFields.add(new ArrayList<>());
 
+        sudokuBoard = new SudokuBoard();
+
         for (int x = 0; x < 9; x++)
             for (int y = 0; y < 9; y++) {
                 TextField emptyTextField = new TextField();
@@ -49,17 +53,13 @@ public class MainView implements Initializable {
                 emptyTextField.setPrefHeight(100);
                 emptyTextField.setPrefWidth(100);
                 emptyTextField.setFont(Font.font("Verdana", 36));
-
-                UnaryOperator<TextFormatter.Change> filter = change -> {
-                    String text = change.getText();
-
-                    if (text.matches("[0-9]*")) {
+                emptyTextField.setTextFormatter(new TextFormatter<String>((TextFormatter.Change change) -> {
+                    if(change.getText().matches("[0-9]*") && !(change.getText().length() > 1)) {
                         return change;
+                    } else {
+                        return null;
                     }
-                    return null;
-                };
-                TextFormatter<String> textFormatter = new TextFormatter<>(filter);
-                emptyTextField.setTextFormatter(textFormatter);
+                }));
 
                 boardTextFields.get(x).add(emptyTextField);
                 grid.add(emptyTextField, x, y);
