@@ -17,7 +17,7 @@ public class MainApp extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(location);
         Parent parent = fxmlLoader.load();
         Scene scene = new Scene(parent/*, 600, 100*/);
-        stage.setTitle("Sudoku Game");
+        stage.setTitle("Sudoku");
         stage.setScene(scene);
         MainView controller = fxmlLoader.getController();
         controller.setStage(stage);
