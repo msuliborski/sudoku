@@ -26,8 +26,12 @@ public class SudokuBoard implements Serializable, Cloneable {
     }
 
     public SudokuBoard(int diff) {
-        //zabezpiecz, tylko wart 1-3
-        this.difficulty = diff;
+        if (diff >= 1 && diff <= 3) {
+            this.difficulty = diff;
+        } else {
+            difficulty = 2;
+        }
+
         initialize();
         fillSudoku(difficulty);
     }
@@ -75,8 +79,16 @@ public class SudokuBoard implements Serializable, Cloneable {
         verifiers = Collections.unmodifiableList(verifiers);
     }
 
-    public int get(int x, int y) {
+    public int getFieldValue(int x, int y) {
         return board.get(x).get(y).getFieldValue();
+    }
+
+    public void setFieldValue(int x, int y, int value) {
+        board.get(x).get(y).setFieldValue(value);
+    }
+
+    public SudokuField getField(int x, int y){
+        return board.get(x).get(y);
     }
 
     public boolean isFieldDefault(int x, int y){
@@ -87,9 +99,6 @@ public class SudokuBoard implements Serializable, Cloneable {
         board.get(x).get(y).setDefault(def);
     }
 
-    public void set(int x, int y, int value) {
-        board.get(x).get(y).setFieldValue(value);
-    }
 
     void fillSudoku(int difficulty) {
         SudokuSolver solver = new BacktrackingSudokuSolver();
@@ -211,12 +220,12 @@ public class SudokuBoard implements Serializable, Cloneable {
 //
 //        for (int x = 0; x < 9; x++) {
 //            for (int y = 0; y < 9; y++) {
-//                sudokuBoard.board.get(x).set(y, (SudokuField) this.board.get(x).get(y).clone());
+//                sudokuBoard.board.getFieldValue(x).setFieldValue(y, (SudokuField) this.board.getFieldValue(x).getFieldValue(y).clone());
 //            }
 //        }
 //
 //        for (int i = 0; i < 9; i++) {
-//            sudokuBoard.verifiers.set(i, (Verifier) this.verifiers.get(i).clone());
+//            sudokuBoard.verifiers.setFieldValue(i, (Verifier) this.verifiers.getFieldValue(i).clone());
 //        }
 //
 //        return sudokuBoard;

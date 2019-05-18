@@ -16,7 +16,7 @@ public class BacktrackingSudokuSolver implements SudokuSolver {
         for (int x = 0; x < 9; x++) {
             for (int y = 0; y < 9; y++) {
 
-                if (board.get(x, y) == 0) {
+                if (board.getFieldValue(x, y) == 0) {
                     var list = new ArrayList<Integer>(10);
                     for (int i = 1; i < 10; i++) {
                         list.add(i);
@@ -27,16 +27,16 @@ public class BacktrackingSudokuSolver implements SudokuSolver {
                         int index = rand.nextInt(list.size());
                         int i = list.get(index);
                         list.remove(index);
-                        board.set(x, y, i);
+                        board.setFieldValue(x, y, i);
                         if (board.verify()) {
                             if (!solveSudoku(board)) {
-                                board.set(x, y, 0);
+                                board.setFieldValue(x, y, 0);
                             } else {
                                 return true;
                             }
                         }
                     }
-                    board.set(x, y, 0);
+                    board.setFieldValue(x, y, 0);
                     return false;
                 }
             }

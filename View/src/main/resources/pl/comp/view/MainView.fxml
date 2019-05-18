@@ -17,17 +17,17 @@
     <children>
         <MenuBar VBox.vgrow="NEVER" >
             <menus>
+                <Menu fx:id="file" mnemonicParsing="false" text="File">
+                    <items >
+                        <MenuItem fx:id="save" mnemonicParsing="false" text="Save" onAction="#saveGame"/>
+                        <MenuItem fx:id="load" mnemonicParsing="false" text="Load" onAction="#loadGame"/>
+                    </items>
+                </Menu>
                 <Menu fx:id="newGame" mnemonicParsing="false" text="New game">
                     <items >
                         <MenuItem fx:id="startEasy" mnemonicParsing="false" text="Easy" onAction="#startGameEasy"/>
                         <MenuItem fx:id="startMedium" mnemonicParsing="false" text="Medium" onAction="#startGameMedium"/>
                         <MenuItem fx:id="startHard" mnemonicParsing="false" text="Hard" onAction="#startGameHard"/>
-                    </items>
-                </Menu>
-                <Menu fx:id="file" mnemonicParsing="false" text="File">
-                    <items >
-                        <MenuItem fx:id="save" mnemonicParsing="false" text="Save" onAction="#saveGame"/>
-                        <MenuItem fx:id="load" mnemonicParsing="false" text="Load" onAction="#loadGame"/>
                     </items>
                 </Menu>
                 <Menu fx:id="language" mnemonicParsing="false" text="Language">

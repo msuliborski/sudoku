@@ -81,7 +81,7 @@ public class Verifier implements Serializable, Cloneable {
     public Object clone() {
 //        Verifier field = (Verifier) super.clone();
 //        for(int i = 0; i < this.fields.size(); i++){
-//            field.fields.add((SudokuField) this.fields.get(i).clone());
+//            field.fields.add((SudokuField) this.fields.getFieldValue(i).clone());
 //        }
 //        return field;
 

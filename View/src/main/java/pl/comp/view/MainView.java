@@ -1,5 +1,9 @@
 package pl.comp.view;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -8,18 +12,16 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+
 import pl.comp.model.BacktrackingSudokuSolver;
 import pl.comp.model.SudokuBoard;
 import pl.comp.model.SudokuBoardDaoFactory;
 
 import java.io.IOException;
 import java.net.URL;
-import java.text.DecimalFormat;
-import java.text.ParsePosition;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.function.UnaryOperator;
 
 public class MainView implements Initializable {
 
@@ -70,6 +72,28 @@ public class MainView implements Initializable {
                     }
                 }));
 
+
+
+//
+//                emptyTextField.textProperty().addListener(new ChangeListener<>() {
+//                    @Override
+//                    public void changed(ObservableValue<? extends String> arg0, String arg1, String arg2) {
+//                        sudokuBoard.g.get(x).add(emptyTextField);
+//                        System.out.println("textField old val: " + arg1);
+//                        System.out.println("textField new val: " + arg2);
+//                        System.out.println();
+//                    }
+//                });
+//
+//                model.firstProperty().addListener(new ChangeListener<String>() {
+//                    @Override
+//                    public void changed(ObservableValue<? extends String> arg0, String arg1, String arg2) {
+//                        System.out.println("model old val: " + arg1);
+//                        System.out.println("model new val: " + arg2);
+//                        System.out.println();
+//                    }
+//                });
+
                 boardTextFields.get(x).add(emptyTextField);
                 grid.add(emptyTextField, x, y);
             }
@@ -82,8 +106,8 @@ public class MainView implements Initializable {
     private void updateGridView() {
         for (int x = 0; x < 9; x++)
             for (int y = 0; y < 9; y++) {
-                if (sudokuBoard.get(x, y) != 0) {
-                    boardTextFields.get(x).get(y).setText(String.valueOf(sudokuBoard.get(x, y)));
+                if (sudokuBoard.getFieldValue(x, y) != 0) {
+                    boardTextFields.get(x).get(y).setText(String.valueOf(sudokuBoard.getFieldValue(x, y)));
                 } else {
                     boardTextFields.get(x).get(y).setText("");
                 }
@@ -97,7 +121,7 @@ public class MainView implements Initializable {
     private void updateSudokuBoard() {
         for (int x = 0; x < 9; x++)
             for (int y = 0; y < 9; y++) {
-                sudokuBoard.set(x, y, Integer.parseInt("0" + boardTextFields.get(y).get(x).getText()));
+                sudokuBoard.setFieldValue(x, y, Integer.parseInt("0" + boardTextFields.get(y).get(x).getText()));
                 if (boardTextFields.get(y).get(x).isEditable()) sudokuBoard.setFieldDefault(x, y, false);
             }
     }
