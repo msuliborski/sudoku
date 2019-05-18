@@ -48,10 +48,7 @@ public class MainView implements Initializable {
     public MenuItem load;
     public Menu language;
     private List<List<TextField>> boardTextFields = new ArrayList<>();
-    private SimpleIntegerProperty intProp = new SimpleIntegerProperty();
-//    private JavaBeanIntegerProperty[][] integerProperties = new JavaBeanIntegerProperty[9][9];
-//    private JavaBeanIntegerPropertyBuilder builder = JavaBeanIntegerPropertyBuilder.create();
-//    private StringConverter converter = new IntegerStringConverter();
+    private SimpleIntegerProperty[][] intProp = new SimpleIntegerProperty[9][9];
     private static boolean isEnglish = true;
 
     int gunwo = 9;
@@ -88,58 +85,16 @@ public class MainView implements Initializable {
                 }));
 
 
-//                int finalX = x;
-//                int finalY = y;
-//                emptyTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-//                    sudokuBoard.setFieldValue(finalY, finalX, Integer.parseInt(newValue));//.g.get(x).add(emptyTextField);
-//                    System.out.println(sudokuBoard.toString());
-//                });
+                int finalX = x;
+                int finalY = y;
+                emptyTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+                    sudokuBoard.setFieldValue(finalY, finalX, Integer.parseInt(newValue));//.g.get(x).add(emptyTextField);
+                    System.out.println(sudokuBoard.toString());
+                });
 
-//                emptyTextField.textProperty().bindBidirectional((Property<String>) sudokuBoard.getField(x, y));
+                intProp[x][y] = new SimpleIntegerProperty();
+                Bindings.bindBidirectional(emptyTextField.textProperty(), intProp[x][y], new NumberStringConverter());
 
-                Bindings.bindBidirectional(emptyTextField.textProperty(), intProp, new NumberStringConverter());
-//                try {
-//                    integerProperties[y][x] = builder.bean(sudokuBoard.getField(y, x)).name("value").build();
-//                    emptyTextField.textProperty().bindBidirectional(integerProperties[y][x], converter);
-////                    emptyTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-////                        System.out.println(sudokuBoard.toString());
-//////                        if (newValue.equals("0")) {
-//////                            textFields[j2][i2].setText("");
-//////                        } else if (newValue.matches("\\d+") && (Integer.valueOf(newValue) > 9 || Integer.valueOf(newValue) < 0)) {
-//////                            textFields[j2][i2].setText(oldValue);
-//////                        }
-////                    });
-//                } catch (NoSuchMethodException e) {
-//                    e.printStackTrace();
-//                }
-
-//                try {
-//                    integerProperties[y][x] = builder.bean(sudokuBoard.getField(y, x)).name("value").build();
-//                } catch (NoSuchMethodException e) {
-//                    e.printStackTrace();
-//                }
-//                emptyTextField.textProperty().bindBidirectional(integerProperties[y][x], converter);
-//                integerProperties[y][x].addListener((observable, oldValue, newValue) -> {
-//                    if (newValue.equals("0")) {
-//                        emptyTextField.setText("");
-//                        if (sudokuBoard.isFieldDefault(finalX, finalY)) {
-//                            boardTextFields.get(finalX).get(finalY).setStyle("-fx-text-fill: grey;");
-//                            boardTextFields.get(finalX).get(finalY).setEditable(false);
-//                        }
-//                    } else if ((newValue.intValue() > 9 || newValue.intValue() < 0)) {
-//                        emptyTextField.setText(String.valueOf(oldValue.intValue()));
-//                    }
-
-//                });
-//
-//                sudokuBoard.firstProperty().addListener(new ChangeListener<String>() {
-//                    @Override
-//                    public void changed(ObservableValue<? extends String> arg0, String arg1, String arg2) {
-//                        System.out.println("model old val: " + arg1);
-//                        System.out.println("model new val: " + arg2);
-//                        System.out.println();
-//                    }
-//                });
 
                 boardTextFields.get(x).add(emptyTextField);
                 grid.add(emptyTextField, x, y);
@@ -196,7 +151,7 @@ public class MainView implements Initializable {
     }
 
     public void verify(ActionEvent actionEvent) {
-        intProp.set(3);
+        intProp[1][1].set(3);
 
         System.out.println(sudokuBoard.toString());
 //        if (sudokuBoard != null) {
