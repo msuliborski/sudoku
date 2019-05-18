@@ -48,6 +48,7 @@ public class MainView implements Initializable {
     public MenuItem load;
     public Menu language;
     private List<List<TextField>> boardTextFields = new ArrayList<>();
+    private SimpleIntegerProperty intProp = new SimpleIntegerProperty();
 //    private JavaBeanIntegerProperty[][] integerProperties = new JavaBeanIntegerProperty[9][9];
 //    private JavaBeanIntegerPropertyBuilder builder = JavaBeanIntegerPropertyBuilder.create();
 //    private StringConverter converter = new IntegerStringConverter();
@@ -87,16 +88,16 @@ public class MainView implements Initializable {
                 }));
 
 
-                int finalX = x;
-                int finalY = y;
-                emptyTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-                    sudokuBoard.setFieldValue(finalY, finalX, Integer.parseInt(newValue));//.g.get(x).add(emptyTextField);
-                    System.out.println(sudokuBoard.toString());
-                });
+//                int finalX = x;
+//                int finalY = y;
+//                emptyTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+//                    sudokuBoard.setFieldValue(finalY, finalX, Integer.parseInt(newValue));//.g.get(x).add(emptyTextField);
+//                    System.out.println(sudokuBoard.toString());
+//                });
 
 //                emptyTextField.textProperty().bindBidirectional((Property<String>) sudokuBoard.getField(x, y));
 
-                Bindings.bindBidirectional(emptyTextField.textProperty(), startPageProperty, new NumberStringConverter());
+                Bindings.bindBidirectional(emptyTextField.textProperty(), intProp, new NumberStringConverter());
 //                try {
 //                    integerProperties[y][x] = builder.bean(sudokuBoard.getField(y, x)).name("value").build();
 //                    emptyTextField.textProperty().bindBidirectional(integerProperties[y][x], converter);
@@ -195,7 +196,7 @@ public class MainView implements Initializable {
     }
 
     public void verify(ActionEvent actionEvent) {
-        integerProperties[2][2].set(3);
+        intProp.set(3);
 
         System.out.println(sudokuBoard.toString());
 //        if (sudokuBoard != null) {
