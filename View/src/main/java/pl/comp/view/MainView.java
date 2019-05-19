@@ -30,6 +30,7 @@ import java.text.DecimalFormat;
 import java.text.ParsePosition;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class MainView implements Initializable {
@@ -47,6 +48,7 @@ public class MainView implements Initializable {
     public MenuItem save;
     public MenuItem load;
     public Menu language;
+    private static final String BUNDLE_NAME = "pl.comp.model.LanguagePack";
     private List<List<TextField>> boardTextFields = new ArrayList<>();
     private SimpleIntegerProperty[][] intProp = new SimpleIntegerProperty[9][9];
     private static boolean isEnglish = true;
@@ -198,49 +200,32 @@ public class MainView implements Initializable {
         updateGridView();
     }
 
-    public void changeLanguage() {
-        isEnglish = !isEnglish;
+    public void setPl() {
+        isEnglish = false;
+        updateNames();
+    }
+
+    public void setEng() {
+        isEnglish = true;
         updateNames();
     }
 
     void updateNames() {
-        String text = verifyButton.getText();
-
+        ResourceBundle bundle;
         if(isEnglish) {
-            newGame.setText("New Game");
-            startEasy.setText("Easy");
-            startMedium.setText("Medium");
-            startHard.setText("Hard");
-            file.setText("File");
-            save.setText("Save");
-            load.setText("Load");
-            language.setText("Language");
-
-            switch (text) {
-                case "SPRAWDŹ!": verifyButton.setText("VERIFY!"); break;
-                case "DOBRZE!": verifyButton.setText("CORRECT!"); break;
-                case "BRAK BŁĘDÓW!": verifyButton.setText("NO LOGIC ERRORS!"); break;
-                case "ŹLE!": verifyButton.setText("WRONG!"); break;
-                case "ZACZNIJ NOWĄ GRĘ Z MENU NA GÓRZE!": verifyButton.setText("START NEW GAME FROM THE MENU ABOVE!"); break;
-            }
+            bundle = ResourceBundle.getBundle(BUNDLE_NAME);
         }
-        else
-        {
-            newGame.setText("Nowa gra");
-            startEasy.setText("Łatwa");
-            startMedium.setText("Średnia");
-            startHard.setText("Trudna");
-            file.setText("Plik");
-            save.setText("Zapisz");
-            load.setText("Wczytaj");
-            language.setText("Język");
-            switch (text) {
-                case "VERIFY!": verifyButton.setText("SPRAWDŹ!"); break;
-                case "CORRECT!": verifyButton.setText("DOBRZE!"); break;
-                case "NO LOGIC ERRORS!": verifyButton.setText("BRAK BŁĘDÓW!"); break;
-                case "WRONG!": verifyButton.setText("ŹLE!"); break;
-                case "START NEW GAME FROM THE MENU ABOVE!": verifyButton.setText("ZACZNIJ NOWĄ GRĘ Z MENU NA GÓRZE!"); break;
-            }
+        else {
+            bundle = ResourceBundle.getBundle(BUNDLE_NAME, new Locale("pl"));
         }
+            newGame.setText(bundle.getString("newGame"));
+            startEasy.setText(bundle.getString("startEasy"));
+            startMedium.setText(bundle.getString("startMedium"));
+            startHard.setText(bundle.getString("startHard"));
+            file.setText(bundle.getString("file"));
+            save.setText(bundle.getString("save"));
+            load.setText(bundle.getString("load"));
+            language.setText(bundle.getString("language"));
+            verifyButton.setText(bundle.getString("verifyButton"));
     }
 }

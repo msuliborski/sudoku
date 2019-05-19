@@ -32,8 +32,8 @@
                 </Menu>
                 <Menu fx:id="language" mnemonicParsing="false" text="Language">
                     <items >
-                        <MenuItem mnemonicParsing="false" text="Polski" onAction="#changeLanguage"/>
-                        <MenuItem mnemonicParsing="false" text="English" onAction="#changeLanguage"/>
+                        <MenuItem mnemonicParsing="false" text="Polski" onAction="#setPl"/>
+                        <MenuItem mnemonicParsing="false" text="English" onAction="#setEng"/>
                     </items>
                 </Menu>
             </menus>
