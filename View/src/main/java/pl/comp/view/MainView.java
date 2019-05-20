@@ -1,13 +1,7 @@
 package pl.comp.view;
 
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.Property;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.adapter.JavaBeanIntegerProperty;
-import javafx.beans.property.adapter.JavaBeanIntegerPropertyBuilder;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -17,17 +11,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
-import javafx.util.StringConverter;
-import javafx.util.converter.IntegerStringConverter;
 import javafx.util.converter.NumberStringConverter;
-import pl.comp.model.BacktrackingSudokuSolver;
 import pl.comp.model.SudokuBoard;
 import pl.comp.model.SudokuBoardDaoFactory;
 
 import java.io.IOException;
 import java.net.URL;
-import java.text.DecimalFormat;
-import java.text.ParsePosition;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -37,7 +26,6 @@ public class MainView implements Initializable {
 
     private Stage stage;
 
-    //Scene elements
     public GridPane grid;
     public Button verifyButton;
     public Menu newGame;
@@ -50,19 +38,16 @@ public class MainView implements Initializable {
     public Menu language;
     private static final String BUNDLE_NAME = "pl.comp.model.LanguagePack";
     private List<List<TextField>> boardTextFields = new ArrayList<>();
-    private SimpleIntegerProperty[][] intProp = new SimpleIntegerProperty[9][9];
+    private SimpleIntegerProperty[][] boardIntegerProperties = new SimpleIntegerProperty[9][9];
     private static boolean isEnglish = true;
+    ResourceBundle bundle;
 
-    int gunwo = 9;
-
-    //private
-
-    //Game components
     private SudokuBoard sudokuBoard;
-    private BacktrackingSudokuSolver sudokuSolver = new BacktrackingSudokuSolver();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
+        bundle = ResourceBundle.getBundle(BUNDLE_NAME);
 
         for (int i = 0; i < 9; i++)
             boardTextFields.add(new ArrayList<>());
@@ -89,46 +74,57 @@ public class MainView implements Initializable {
 
                 int finalX = x;
                 int finalY = y;
+
+
+                boardIntegerProperties[x][y] = new SimpleIntegerProperty();
+                Bindings.bindBidirectional(emptyTextField.textProperty(), boardIntegerProperties[x][y], new NumberStringConverter());
+
                 emptyTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-                    sudokuBoard.setFieldValue(finalY, finalX, Integer.parseInt(newValue));//.g.get(x).add(emptyTextField);
-                    System.out.println(sudokuBoard.toString());
+                    if (newValue.equals("")){
+                        sudokuBoard.setFieldValue(finalY, finalX, 0);
+                    } else {
+                        sudokuBoard.setFieldValue(finalY, finalX, Integer.parseInt(newValue));
+                    }
                 });
 
-                intProp[x][y] = new SimpleIntegerProperty();
-                Bindings.bindBidirectional(emptyTextField.textProperty(), intProp[x][y], new NumberStringConverter());
-
+                int finalX1 = x;
+                int finalY1 = y;
+                boardIntegerProperties[x][y].addListener((observable, oldValue, newValue) -> {
+                    System.out.println(newValue.intValue()+"");
+                    if (newValue.intValue() == 0) {
+                        emptyTextField.setText("");
+                    } else {
+                        emptyTextField.setText(String.valueOf(newValue));
+                    }
+                    if (sudokuBoard.isFieldDefault(finalY1, finalX1)) {
+                        emptyTextField.setStyle("-fx-text-fill: grey;");
+                        emptyTextField.setEditable(false);
+                    } else {
+                        emptyTextField.setStyle("-fx-text-fill: black;");
+                        emptyTextField.setEditable(true);
+                    }
+                });
 
                 boardTextFields.get(x).add(emptyTextField);
                 grid.add(emptyTextField, x, y);
             }
+        for (int x = 0; x < 9; x++)
+            for (int y = 0; y < 9; y++)
+                boardTextFields.get(x).get(y).setText("");
     }
 
     public void setStage(Stage stage) {
         this.stage = stage;
     }
 
-    private void updateGridView() {
-        for (int x = 0; x < 9; x++)
+    private void reinitializeBoard() {
+        for (int x = 0; x < 9; x++) {
             for (int y = 0; y < 9; y++) {
-                if (sudokuBoard.getFieldValue(x, y) != 0) {
-                    boardTextFields.get(x).get(y).setText(String.valueOf(sudokuBoard.getFieldValue(x, y)));
-                } else {
-                    boardTextFields.get(x).get(y).setText("");
-                }
-                if (sudokuBoard.isFieldDefault(x, y)) {
-                    boardTextFields.get(x).get(y).setStyle("-fx-text-fill: grey;");
-                    boardTextFields.get(x).get(y).setEditable(false);
-                }
+                boardIntegerProperties[y][x].set(sudokuBoard.getFieldValue(x, y));
             }
+        }
     }
 
-    private void updateSudokuBoard() {
-        for (int x = 0; x < 9; x++)
-            for (int y = 0; y < 9; y++) {
-                sudokuBoard.setFieldValue(x, y, Integer.parseInt("0" + boardTextFields.get(y).get(x).getText()));
-                if (boardTextFields.get(y).get(x).isEditable()) sudokuBoard.setFieldDefault(x, y, false);
-            }
-    }
 
     public void startGameEasy(ActionEvent actionEvent) {
         startGame(1);
@@ -144,51 +140,33 @@ public class MainView implements Initializable {
 
     public void startGame(int difficulty) {
         sudokuBoard = new SudokuBoard(difficulty);
-        this.updateGridView();
-        if (isEnglish)
-            verifyButton.setText("VERIFY");
-        else
-            verifyButton.setText("SPRAWDŹ");
+        //this.updateGridView();
+        reinitializeBoard();
+        verifyButton.setText(bundle.getString("verifyButton"));
         verifyButton.setTextFill(Color.BLACK);
     }
 
     public void verify(ActionEvent actionEvent) {
-        intProp[1][1].set(3);
+        if (sudokuBoard != null) {
+            if (sudokuBoard.verify() && !sudokuBoard.areThereZeros()) {
+                verifyButton.setText(bundle.getString("correct"));
+                verifyButton.setTextFill(Color.GREEN);
+            } else if (sudokuBoard.verify()) {
+                verifyButton.setText(bundle.getString("nologicerrors"));
+                verifyButton.setTextFill(Color.BLUE);
+            } else {
 
-        System.out.println(sudokuBoard.toString());
-//        if (sudokuBoard != null) {
-//            updateSudokuBoard();
-//            if (sudokuBoard.verify() && !sudokuBoard.areThereZeros()) {
-//                if (isEnglish)
-//                    verifyButton.setText("CORRECT!");
-//                else
-//                    verifyButton.setText("DOBRZE!");
-//                verifyButton.setTextFill(Color.GREEN);
-//            } else if (sudokuBoard.verify()) {
-//                if (isEnglish)
-//                    verifyButton.setText("NO LOGIC ERRORS!");
-//                else
-//                    verifyButton.setText("BRAK BŁĘDÓW!");
-//                verifyButton.setTextFill(Color.BLUE);
-//            } else {
-//                if (isEnglish)
-//                    verifyButton.setText("WRONG!");
-//                else
-//                    verifyButton.setText("ŹLE!");
-//                verifyButton.setTextFill(Color.RED);
-//            }
-//        } else {
-//            if (isEnglish)
-//                verifyButton.setText("START NEW GAME FROM THE MENU ABOVE!");
-//            else
-//                verifyButton.setText("ZACZNIJ NOWĄ GRĘ Z MENU NA GÓRZE!");
-//            verifyButton.setTextFill(Color.RED);
-//        }
+                verifyButton.setText(bundle.getString("wrong"));
+                verifyButton.setTextFill(Color.RED);
+            }
+        } else {
+            verifyButton.setText(bundle.getString("newgameb"));
+            verifyButton.setTextFill(Color.RED);
+        }
     }
 
     public void saveGame() {
         SudokuBoardDaoFactory factory = new SudokuBoardDaoFactory();
-        updateSudokuBoard();
         if (sudokuBoard != null) {
             factory.getFileDao("sudoku").write(sudokuBoard);
         }
@@ -197,7 +175,7 @@ public class MainView implements Initializable {
     public void loadGame() throws IOException {
         SudokuBoardDaoFactory factory = new SudokuBoardDaoFactory();
         sudokuBoard = (SudokuBoard) factory.getFileDao("sudoku").read();
-        updateGridView();
+        reinitializeBoard();
     }
 
     public void setPl() {
@@ -211,7 +189,7 @@ public class MainView implements Initializable {
     }
 
     void updateNames() {
-        ResourceBundle bundle;
+
         if(isEnglish) {
             bundle = ResourceBundle.getBundle(BUNDLE_NAME);
         }

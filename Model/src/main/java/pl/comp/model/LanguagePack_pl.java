@@ -6,7 +6,7 @@ public class LanguagePack_pl extends ListResourceBundle {
     @Override
     protected Object[][] getContents() {
         return new Object[][] {
-                {"verifyButton", "Sprawdź"},
+                {"verifyButton", "SPRAWDŹ"},
                 {"newGame", "Nowa gra"},
                 {"startEasy", "Łatwa"},
                 {"startMedium", "Średnia"},
@@ -14,7 +14,13 @@ public class LanguagePack_pl extends ListResourceBundle {
                 {"file", "Plik"},
                 {"save", "Zapisz"},
                 {"load", "Wczytaj"},
-                {"language", "Język"}
+                {"language", "Język"},
+
+                {"correct", "DOBRZE!"},
+                {"nologicerrors", "BRAK BŁĘDÓW!"},
+                {"wrong", "ŹLE!"},
+                {"newgameb", "ZACZNIJ NOWĄ GRĘ Z MENU NA GÓRZE!"}
+
         };
     }
 }

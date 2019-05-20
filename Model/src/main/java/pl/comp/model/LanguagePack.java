@@ -5,8 +5,8 @@ import java.util.ListResourceBundle;
 public class LanguagePack extends ListResourceBundle {
     @Override
     protected Object[][] getContents() {
-        return new Object[][] {
-                {"verifyButton", "Verify"},
+        return new Object[][]{
+                {"verifyButton", "VERIFY"},
                 {"newGame", "New game"},
                 {"startEasy", "Easy"},
                 {"startMedium", "Medium"},
@@ -14,7 +14,13 @@ public class LanguagePack extends ListResourceBundle {
                 {"file", "File"},
                 {"save", "Save"},
                 {"load", "Load"},
-                {"language", "Language"}
+                {"language", "Language"},
+
+                {"correct", "CORRECT!"},
+                {"nologicerrors", "NO LOGIC ERRORS!"},
+                {"wrong", "WRONG!"},
+                {"newgameb", "START NEW GAME FROM THE MENU ABOVE!"}
+
         };
     }
 }
