@@ -5,4 +5,5 @@ open module ModelProject {
     exports pl.comp.model.lang.Re;
     exports pl.comp.model.dao;
     requires org.apache.commons.lang3;
+    requires java.logging;
 }
