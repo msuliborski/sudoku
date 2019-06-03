@@ -10,7 +10,7 @@ public class FileAndConsoleLoggerFactory {
 
     public static Logger getConfiguredLogger(String name) {
         if (!loggerConfigured) {
-            try(InputStream stream = FileAndConsoleLoggerFactory.class.getResourceAsStream("logging.properties")) {
+            try(InputStream stream = FileAndConsoleLoggerFactory.class.getResourceAsStream("/logging.properties")) {
                 LogManager.getLogManager().readConfiguration(stream);
                 loggerConfigured = true;
             } catch (IOException e) {
