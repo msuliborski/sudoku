@@ -1,4 +1,6 @@
-package pl.comp.model;
+package pl.comp.model.dao;
+
+import pl.comp.model.sudoku.SudokuBoard;
 
 import java.io.*;
 

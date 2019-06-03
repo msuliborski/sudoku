@@ -1,6 +1,8 @@
-package pl.comp.model;
+package pl.comp.model.sudoku;
 
-import com.google.common.base.Objects;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import pl.comp.model.solver.BacktrackingSudokuSolver;
+import pl.comp.model.solver.SudokuSolver;
 
 import java.io.*;
 import java.util.*;
@@ -100,7 +102,7 @@ public class SudokuBoard implements Serializable, Cloneable {
     }
 
 
-    void fillSudoku(int difficulty) {
+    public void fillSudoku(int difficulty) {
         SudokuSolver solver = new BacktrackingSudokuSolver();
         solver.solveSudoku(this);
         switch (difficulty){
@@ -182,8 +184,10 @@ public class SudokuBoard implements Serializable, Cloneable {
 
     @Override
     public int hashCode() {
-
-        return Objects.hashCode(board, verifiers);
+        return new HashCodeBuilder(17, 37)
+                .append(board)
+                .append(verifiers)
+                .toHashCode();
     }
 
     @Override

@@ -1,6 +1,6 @@
-package pl.comp.model;
+package pl.comp.model.sudoku;
 
-import com.google.common.base.Objects;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.io.Serializable;
 
@@ -9,11 +9,11 @@ public class SudokuField implements Serializable, Comparable<SudokuField>, Clone
     private int value;
     private boolean isDefault = true;
 
-    SudokuField() {
+    public SudokuField() {
         this.value = 0;
     }
 
-    SudokuField(int val) {
+    public SudokuField(int val) {
         this.value = val;
     }
 
@@ -39,8 +39,9 @@ public class SudokuField implements Serializable, Comparable<SudokuField>, Clone
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hashCode(value);
+    public int hashCode() {return new HashCodeBuilder(17, 37)
+            .append(value)
+            .toHashCode();
     }
 
     @Override

@@ -1,4 +1,4 @@
-package pl.comp.model;
+package pl.comp.model.lang;
 
 import java.util.ListResourceBundle;
 

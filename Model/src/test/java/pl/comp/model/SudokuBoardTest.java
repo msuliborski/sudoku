@@ -1,18 +1,19 @@
 package pl.comp.model;
 
+import org.junit.Test;
+import pl.comp.model.dao.FileSudokuBoardDao;
+import pl.comp.model.dao.SudokuBoardDaoFactory;
+import pl.comp.model.sudoku.SudokuBoard;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.logging.Logger;
+
+import static org.junit.Assert.*;
 
 
 public class SudokuBoardTest {
 
-
-    SudokuBoardTest() {
-
-    }
-
-    @org.junit.jupiter.api.Test
-    void testIfFillBoardGeneratesCorrectDigitsLayout() {
+    @Test
+    public void testIfFillBoardGeneratesCorrectDigitsLayout() {
         SudokuBoard sudoku = new SudokuBoard();
 
         sudoku.fillSudoku(2);
@@ -40,8 +41,8 @@ public class SudokuBoardTest {
         assertTrue(test);
     }
 
-    @org.junit.jupiter.api.Test
-    void testIfTwoSubsequentCallOfFillBoardGeneratesDifferentDigitsLayout() {
+    @Test
+    public void testIfTwoSubsequentCallOfFillBoardGeneratesDifferentDigitsLayout() {
         SudokuBoard sudoku = new SudokuBoard();
 
         StringBuilder boardstring1 = new StringBuilder();
@@ -65,8 +66,10 @@ public class SudokuBoardTest {
 
     }
 
-    @org.junit.jupiter.api.Test
-    void testIfSerializationWorks() {
+
+    private static final Logger LOGGER = Logger.getLogger("testLogger");
+    @Test
+    public void testIfSerializationWorks() {
 
         SudokuBoardDaoFactory factory = new SudokuBoardDaoFactory();
 
@@ -80,10 +83,12 @@ public class SudokuBoardTest {
 
         assertEquals(sudoku, sudokuFromFile);
 
+
+
     }
 
-    @org.junit.jupiter.api.Test
-    void testIfCloneWorks() {
+    @Test
+    public void testIfCloneWorks() {
 
         SudokuBoard sudokuBoard1 = new SudokuBoard(1);
         int help = sudokuBoard1.getFieldValue(0, 0);

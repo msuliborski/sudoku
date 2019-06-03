@@ -12,8 +12,8 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import javafx.util.converter.NumberStringConverter;
-import pl.comp.model.SudokuBoard;
-import pl.comp.model.SudokuBoardDaoFactory;
+import pl.comp.model.sudoku.SudokuBoard;
+import pl.comp.model.dao.SudokuBoardDaoFactory;
 
 import java.io.IOException;
 import java.net.URL;
@@ -36,7 +36,7 @@ public class MainView implements Initializable {
     public MenuItem save;
     public MenuItem load;
     public Menu language;
-    private static final String BUNDLE_NAME = "pl.comp.model.LanguagePack";
+    private static final String BUNDLE_NAME = "pl.comp.model.lang.LanguagePack";
     private List<List<TextField>> boardTextFields = new ArrayList<>();
     private SimpleIntegerProperty[][] boardIntegerProperties = new SimpleIntegerProperty[9][9];
     private static boolean isEnglish = true;

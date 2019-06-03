@@ -1,4 +1,4 @@
-package pl.comp.model;
+package pl.comp.model.sudoku;
 
 public class SudokuRow extends Verifier {
 }

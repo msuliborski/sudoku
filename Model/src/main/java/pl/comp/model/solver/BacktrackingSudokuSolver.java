@@ -1,4 +1,7 @@
-package pl.comp.model;
+package pl.comp.model.solver;
+
+import pl.comp.model.solver.SudokuSolver;
+import pl.comp.model.sudoku.SudokuBoard;
 
 import java.util.ArrayList;
 import java.util.Random;

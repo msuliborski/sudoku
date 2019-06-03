@@ -1,6 +1,6 @@
-package pl.comp.model;
+package pl.comp.model.sudoku;
 
-import com.google.common.base.Objects;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -64,7 +64,10 @@ public class Verifier implements Serializable, Cloneable {
 
     @Override
     public int hashCode(){
-        return Objects.hashCode(fields, addCounter);
+        return new HashCodeBuilder(17, 37)
+                .append(fields)
+                .append(addCounter)
+                .toHashCode();
     }
 
     @Override

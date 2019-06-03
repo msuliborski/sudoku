@@ -1,5 +1,11 @@
 package pl.comp.model;
 
+import pl.comp.model.dao.FileSudokuBoardDao;
+import pl.comp.model.dao.SudokuBoardDaoFactory;
+import pl.comp.model.solver.BacktrackingSudokuSolver;
+import pl.comp.model.solver.SudokuSolver;
+import pl.comp.model.sudoku.SudokuBoard;
+
 public class Main {
     public static void main(final String[] args) {
 

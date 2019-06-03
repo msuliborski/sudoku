@@ -1,11 +1,12 @@
 package pl.comp.model;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
+import pl.comp.model.sudoku.SudokuField;
+import pl.comp.model.sudoku.SudokuRow;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.Assert.*;
 
-class VerifierTest {
+public class VerifierTest {
 
     @Test
     public void cloneTest(){

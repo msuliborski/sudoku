@@ -1,25 +1,26 @@
 package pl.comp.model;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
+import pl.comp.model.sudoku.SudokuField;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.*;
 
-class SudokuFieldTest {
+public class SudokuFieldTest {
 
     @Test
-    void toStringTest() {
+    public void toStringTest() {
     }
 
     @Test
-    void hashCodeTest() {
+    public void hashCodeTest() {
     }
 
     @Test
-    void equalsTest() {
+    public void equalsTest() {
     }
 
     @Test
-    void compareToTest() {
+    public void compareToTest() {
 
         SudokuField s1 = new SudokuField();
         s1.setFieldValue(1);
@@ -38,7 +39,7 @@ class SudokuFieldTest {
     }
 
     @Test
-    void cloneTest() {
+    public void cloneTest() {
         try {
             SudokuField s1 = new SudokuField();
             SudokuField s2 = (SudokuField) s1.clone();

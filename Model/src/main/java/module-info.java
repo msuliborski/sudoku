@@ -1,4 +1,8 @@
 open module ModelProject {
     exports pl.comp.model;
-    requires com.google.common;
+    exports pl.comp.model.sudoku;
+    exports pl.comp.model.solver;
+    exports pl.comp.model.lang;
+    exports pl.comp.model.dao;
+    requires org.apache.commons.lang3;
 }
