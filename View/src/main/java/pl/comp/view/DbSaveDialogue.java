@@ -7,16 +7,14 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import pl.comp.model.dao.JdbcSudokuBoardDao;
 import pl.comp.model.dao.SudokuBoardDaoFactory;
-import pl.comp.model.exceptions.DaoException;
 import pl.comp.model.exceptions.SudokuException;
 import pl.comp.model.logs.FileAndConsoleLoggerFactory;
 import pl.comp.model.sudoku.SudokuBoard;
 
 import java.net.URL;
-import java.sql.SQLException;
+import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class DbSaveDialogue implements Initializable {
@@ -49,10 +47,13 @@ public class DbSaveDialogue implements Initializable {
 
     public void saveToDb(ActionEvent actionEvent) throws SudokuException {
         String name = saveNameField.getText();
-        SudokuBoardDaoFactory factory = new SudokuBoardDaoFactory();
         if (MainView.getSudokuBoard() != null) {
-            factory.getDatabaseDao(name).write(MainView.getSudokuBoard());
-            MainView.getInstance().getLoadableBoards();
+
+            JdbcSudokuBoardDao dao = new JdbcSudokuBoardDao(name);
+            dao.write(MainView.getSudokuBoard());
+
+            Stage stage = (Stage) saveDbButton.getScene().getWindow();
+            stage.close();
         }
     }
 }

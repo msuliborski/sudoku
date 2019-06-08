@@ -11,15 +11,23 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
+import static java.util.logging.Level.SEVERE;
+
 public class JdbcSudokuBoardDao implements Dao<SudokuBoard>, AutoCloseable {
 
     private static final Logger logger = FileAndConsoleLoggerFactory.getConfiguredLogger(JdbcSudokuBoardDao.class.getName());
     private static final String DRIVER = "org.sqlite.JDBC";
     private static final String DB_URL = "jdbc:sqlite:SudokuBoards.db";
 
+    static {
+        try {
+            Class.forName(DRIVER);
+        } catch(ClassNotFoundException cnfex) {
+//            logger.log(SEVERE, getDaoMessage(DaoException.NO_JDBC_DRIVER), cnfex);
+        }
+    }
     private static final String CREATE_BOARDS_TABLE = "CREATE TABLE IF NOT EXISTS boards (" +
-            "[boardID] INTEGER PRIMARY KEY," +
-            "[name] VARCHAR(255)," +
+            "[boardName] VARCHAR(255)," +
             "[creationDate] VARCHAR(255)" +
             ")";
     private static final String CREATE_FIELDS_TABLE = "CREATE TABLE IF NOT EXISTS fields (" +
@@ -27,49 +35,61 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard>, AutoCloseable {
             "[y] INTEGER," +
             "[value] INTEGER," +
             "[isDefault] BOOLEAN," +
-            "[boardID] INTEGER," +
-            "FOREIGN KEY(boardID) REFERENCES boards(boardID)" +
+            "[boardName] INTEGER" +
             ")";
 
     private static final String DROP_TABLE_BOARDS = "DROP TABLE IF EXISTS boards";
     private static final String DROP_TABLE_FIELDS = "DROP TABLE IF EXISTS fields";
     private static final String READ_ALL_BOARDS = "SELECT * FROM boards";
     private static final String READ_ALL_FIELDS = "SELECT * FROM fields";
-    private static final String READ_QUERY_FIELD = "SELECT * FROM fields WHERE [boardID]=?";
-    private static final String WRITE_QUERY_BOARD = "INSERT INTO boards([boardID], [name], [creationDate]) VALUES(?, ?, strftime('%d/%m/%Y %H:%M:%S', 'now', 'localtime'))";
-    private static final String WRITE_QUERY_FIELD = "INSERT INTO fields([x], [y], [value], [isDefault], [boardID]) VALUES(?, ?, ?, ?, ?)";
-    private static final String DELETE_QUERY_BOARD = "DELETE FROM boards WHERE [boardID]=?";
-    private static final String DELETE_QUERY_FIELDS = "DELETE FROM fields WHERE [boardID]=?";
+    private static final String READ_QUERY_FIELD = "SELECT * FROM fields WHERE [boardName]=?";
+    private static final String WRITE_QUERY_BOARD = "INSERT INTO boards([boardName], [creationDate]) VALUES(?, strftime('%d/%m/%Y %H:%M:%S', 'now', 'localtime'))";
+    private static final String WRITE_QUERY_FIELD = "INSERT INTO fields([x], [y], [value], [isDefault], [boardName]) VALUES(?, ?, ?, ?, ?)";
+    private static final String DELETE_QUERY_BOARD = "DELETE FROM boards WHERE [boardName]=?";
+    private static final String DELETE_ALL_BOARD = "DELETE FROM boards";
+    private static final String DELETE_QUERY_FIELDS = "DELETE FROM fields WHERE [boardName]=?";
+    private static final String DELETE_ALL_FIELDS = "DELETE FROM fields";
 
     private Connection conn;
     private Statement stat;
     private PreparedStatement pstmt;
     private ResultSet rs;
-    private int boardID;
+    private String boardName;
 
 
-    public JdbcSudokuBoardDao(final String name) throws SudokuException {
+    public JdbcSudokuBoardDao(String name) throws SudokuException {
+
         if (name == null) {
             throw new DaoException(DaoException.NULL_NAME);
         }
-//        if (wasGenerated == null) {
-//            throw new DaoException(DaoException.NULL_BOARD);
-//        }
+
+        this.boardName = name;
+
         try {
             conn = DriverManager.getConnection(DB_URL);
             stat = conn.createStatement();
-            stat.execute(DROP_TABLE_FIELDS);
-            stat = conn.createStatement();
-            stat.execute(DROP_TABLE_BOARDS);
-            stat = conn.createStatement();
             stat.execute(CREATE_BOARDS_TABLE);
-            stat = conn.createStatement();
             stat.execute(CREATE_FIELDS_TABLE);
         } catch (SQLException se) {
 //            throw new DaoException(DaoException.SQL_ERROR, se);
-            System.out.println(se.toString());
+            System.out.println(se.toString() + "awdwadwadwad");
         }
-        this.boardID = name.hashCode();
+
+
+    }
+
+    void resetTables() {
+        try {
+            stat.execute(DROP_TABLE_FIELDS);
+            stat.execute(DROP_TABLE_BOARDS);
+            stat.execute(CREATE_BOARDS_TABLE);
+            stat.execute(CREATE_FIELDS_TABLE);
+            stat.execute(DELETE_ALL_BOARD);
+            stat.execute(DELETE_ALL_FIELDS);
+        } catch (SQLException se) {
+//            throw new DaoException(DaoException.SQL_ERROR, se);
+            System.out.println(se.toString() + "awdwadwadwad");
+        }
     }
 
     @Override
@@ -87,22 +107,20 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard>, AutoCloseable {
             System.out.println("   read ");
             SudokuBoard sudokuBoard = new SudokuBoard();
             pstmt = conn.prepareStatement(READ_QUERY_FIELD);
-            pstmt.setString(1, String.valueOf(boardID));
+            pstmt.setString(1, boardName);
             rs = pstmt.executeQuery();
             while (rs.next()) {
-                System.out.println("  read petla ");
+                //System.out.println("  read petla ");
 
-                System.out.println(rs.getInt(1) + "  " + rs.getInt(2) + "  " + rs.getInt(3) + "  " + rs.getInt(4) + "  ");
+//                System.out.println(rs.getInt(1) + "  " + rs.getInt(2) + "  " + rs.getInt(3) + "  " + rs.getInt(4) + "  ");
                 int x = rs.getInt(1);
                 int y = rs.getInt(2);
                 sudokuBoard.setFieldValue(x, y, rs.getInt(3));
                 sudokuBoard.getField(x, y).setDefault(rs.getBoolean(4));
-
-
             }
             return sudokuBoard;
         } catch (SQLException se) {
-            System.out.println(se.toString()+"        read");
+            System.out.println(se.toString() + "        read");
 //            throw new DaoException(DaoException.SQL_ERROR);
         }
         return null;
@@ -114,17 +132,26 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard>, AutoCloseable {
 
         System.out.println("  write ");
 
-        System.out.println(sudokuBoard.toString());
+        //System.out.println(sudokuBoard.toString());
+
 
         if (sudokuBoard == null) {
             throw new DaoException(DaoException.NULL_BOARD);
         }
         try {
             delete();
-            pstmt = conn.prepareStatement(WRITE_QUERY_BOARD);
-            pstmt.setInt(1, boardID);
-            pstmt.setString(2, String.valueOf(boardID));
-            pstmt.execute();
+
+            PreparedStatement ps = conn.prepareStatement(WRITE_QUERY_BOARD);
+            ps.setString(1, boardName);
+            ps.execute();
+
+//            PreparedStatement ps2 = conn.prepareStatement("SELECT * FROM boards");
+//            ResultSet rss = ps2.executeQuery();
+//            while (rss.next()){
+//                System.out.println("asd");
+//            }
+
+
 
             pstmt = conn.prepareStatement(READ_ALL_BOARDS);
             rs = pstmt.executeQuery();
@@ -139,55 +166,78 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard>, AutoCloseable {
                     pstmt.setInt(2, y);
                     pstmt.setInt(3, sudokuBoard.getFieldValue(x, y));
                     pstmt.setBoolean(4, sudokuBoard.getField(x, y).isDefault());
-                    pstmt.setInt(5, boardID);
+                    pstmt.setString(5, boardName);
                     pstmt.execute();
                 }
             }
+            System.out.println("write end");
         } catch (SQLException se) {
-            System.out.println(se.toString()+"        write");
+            System.out.println(se.toString() + "        write");
 //            throw new DaoException(DaoException.SQL_ERROR);
         }
     }
 
+//
+//    public static List<String[]> getAllBoardsAsStrings() throws DaoException {
+//
+//        try {
+//            List<String[]> list = new ArrayList<>();
+//            JdbcSudokuBoardDao jdbcSudokuBoardDao = new JdbcSudokuBoardDao("sudoku");
+//            jdbcSudokuBoardDao.pstmt = jdbcSudokuBoardDao.conn.prepareStatement(READ_ALL_BOARDS);
+//            jdbcSudokuBoardDao.rs = jdbcSudokuBoardDao.pstmt.executeQuery();
+//            while (jdbcSudokuBoardDao.rs.next()) {
+//                System.out.println("jedrek: " + jdbcSudokuBoardDao.rs.getString(1) + "  " + jdbcSudokuBoardDao.rs.getString(2));
+//                String[] array = new String[2];
+//                array[0] = jdbcSudokuBoardDao.rs.getString(1);
+//                array[1] = jdbcSudokuBoardDao.rs.getString(2);
+//                list.add(array);
+//            }
+//            return Collections.unmodifiableList(list);
+//        } catch (SQLException | SudokuException e) {
+//            //System.out.println(e.toString()+"        getall");
+////            throw new DaoException(DaoException.SQL_ERROR);
+//        }
+//        return null;
+//    }
 
-    public static List<String[]> getAllBoardsAsStrings() throws DaoException {
-        try  {
+    //
+    public List<String[]> getAllBoardsAsStrings() {
+        try {
             List<String[]> list = new ArrayList<>();
-            JdbcSudokuBoardDao jdbcSudokuBoardDao = new JdbcSudokuBoardDao("temp");
-            jdbcSudokuBoardDao.pstmt = jdbcSudokuBoardDao.conn.prepareStatement(READ_ALL_BOARDS);
-            jdbcSudokuBoardDao.rs = jdbcSudokuBoardDao.pstmt.executeQuery();
-            while (jdbcSudokuBoardDao.rs.next()) {
+            pstmt = conn.prepareStatement(READ_ALL_BOARDS);
+            rs = pstmt.executeQuery();
+            while (rs.next()) {
+//                System.out.println("jedrek: " + rs.getString(1) + "   " + rs.getString(2) + "   " + rs.getString(3));
                 String[] array = new String[2];
-                array[0] = jdbcSudokuBoardDao.rs.getString(1);
-                array[1] = jdbcSudokuBoardDao.rs.getString(2);
+                array[0] = rs.getString(1);
+                array[1] = rs.getString(2);
                 list.add(array);
             }
             return Collections.unmodifiableList(list);
-        } catch (SQLException | SudokuException e) {
-            System.out.println(e.toString()+"        getall");
+        } catch (SQLException e) {
+            System.out.println(e.toString() + "        getall");
 //            throw new DaoException(DaoException.SQL_ERROR);
         }
         return null;
     }
 
 
-
-
     public void delete() throws DaoException {
 
-        System.out.println("  delete ");
+        //System.out.println("  delete ");
         try {
             pstmt = conn.prepareStatement(DELETE_QUERY_BOARD);
-            pstmt.setInt(1, boardID);
+            pstmt.setString(1, boardName);
             pstmt.executeUpdate();
             pstmt = conn.prepareStatement(DELETE_QUERY_FIELDS);
-            pstmt.setInt(1, boardID);
+            pstmt.setString(1, boardName);
             pstmt.executeUpdate();
 
         } catch (SQLException se) {
 
-            System.out.println(se.toString()+"        delete");
+            System.out.println(se.toString() + "        delete");
 //            throw new DaoException(DaoException.SQL_ERROR);
         }
     }
 }
+

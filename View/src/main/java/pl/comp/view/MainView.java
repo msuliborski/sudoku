@@ -45,7 +45,7 @@ public class MainView implements Initializable {
     public MenuItem load;
     public Menu database;
     public MenuItem dbsave;
-    public Menu dbload;
+    public MenuItem dbload;
     public Menu language;
     private static final String BUNDLE_NAME = "interfaceLanguage";
     private List<List<TextField>> boardTextFields = new ArrayList<>();
@@ -119,7 +119,6 @@ public class MainView implements Initializable {
                 int finalX1 = x;
                 int finalY1 = y;
                 boardIntegerProperties[x][y].addListener((observable, oldValue, newValue) -> {
-                    System.out.println(newValue.intValue() + "");
                     if (newValue.intValue() == 0) {
                         emptyTextField.setText("");
                     } else {
@@ -141,7 +140,6 @@ public class MainView implements Initializable {
             for (int y = 0; y < 9; y++) {
                 boardTextFields.get(x).get(y).setText("");
             }
-        getLoadableBoards();
     }
 
     public void setStage(Stage stage) {
@@ -154,30 +152,29 @@ public class MainView implements Initializable {
 
     }
 
-    public void getLoadableBoards() {
-        try {
-            List<String[]> loadables = JdbcSudokuBoardDao.getAllBoardsAsStrings();
-            if (loadables.size() > 0) {
-                dbload.getItems().removeAll();
+//    public void getLoadableBoards() {
+//        try {
+//            List<String[]> loadables = JdbcSudokuBoardDao.getAllBoardsAsStrings();
+//            if (loadables.size() > 0) {
+//                dbload.getItems().removeAll();
+//
+//                for (String[] subMenu : loadables) {
+//                    dbload.getItems().add(new MenuItem(subMenu[0] + " " + subMenu[1]));
+//                }
+//            }
+//
+//        } catch (DaoException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
-                for (String[] subMenu : loadables) {
-                    dbload.getItems().add(new MenuItem(subMenu[0] + " " + subMenu[1]));
-                }
-            }
-
-        } catch (DaoException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void reinitializeBoard() {
+    public void reinitializeBoard() {
         for (int x = 0; x < 9; x++) {
             for (int y = 0; y < 9; y++) {
                 boardIntegerProperties[y][x].set(sudokuBoard.getFieldValue(x, y));
             }
         }
     }
-
 
     public void startGameEasy(ActionEvent actionEvent) {
         startGame(1);
@@ -271,6 +268,7 @@ public class MainView implements Initializable {
         } else {
             bundle = ResourceBundle.getBundle(BUNDLE_NAME, new Locale("pl"));
         }
+
         newGame.setText(bundle.getString("newGame"));
         startEasy.setText(bundle.getString("startEasy"));
         startMedium.setText(bundle.getString("startMedium"));
@@ -278,6 +276,9 @@ public class MainView implements Initializable {
         file.setText(bundle.getString("file"));
         save.setText(bundle.getString("save"));
         load.setText(bundle.getString("load"));
+        database.setText(bundle.getString("database"));
+        dbsave.setText(bundle.getString("save"));
+        dbload.setText(bundle.getString("load"));
         language.setText(bundle.getString("language"));
         verifyButton.setText(bundle.getString("verifyButton"));
     }
@@ -293,6 +294,35 @@ public class MainView implements Initializable {
         Parent root = fxmlLoader.load();
         Stage stage = new Stage();
         stage.setTitle(bundle.getString("saveDialogue"));
+        stage.setScene(new Scene(root));
+        stage.show();
+    }
+
+    @SuppressWarnings("Duplicates")
+    public void openLoadWindow () throws IOException {
+//        URL location = getClass().getResource("/pl/compprog/gui/DbSaveDialogue.fxml");
+////        FXMLLoader fxmlLoader = new FXMLLoader(location);
+////        fxmlLoader.setResources(ResourceBundle.getBundle(BUNDLE_NAME, new Locale("en")));
+////        Parent root = fxmlLoader.load();
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("DbLoadDialogue.fxml"));
+
+        Parent root = fxmlLoader.load();
+        Stage stage = new Stage();
+        stage.setTitle(bundle.getString("loadDialogue"));
+        stage.setScene(new Scene(root));
+        stage.show();
+    }
+@SuppressWarnings("Duplicates")
+    public void openDeleteWindow () throws IOException {
+//        URL location = getClass().getResource("/pl/compprog/gui/DbSaveDialogue.fxml");
+////        FXMLLoader fxmlLoader = new FXMLLoader(location);
+////        fxmlLoader.setResources(ResourceBundle.getBundle(BUNDLE_NAME, new Locale("en")));
+////        Parent root = fxmlLoader.load();
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("DbDeleteDialogue.fxml"));
+
+        Parent root = fxmlLoader.load();
+        Stage stage = new Stage();
+        stage.setTitle(bundle.getString("deleteDialogue"));
         stage.setScene(new Scene(root));
         stage.show();
     }

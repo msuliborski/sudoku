@@ -11,7 +11,7 @@ public class SudokuBoardDaoFactory {
         return new FileSudokuBoardDao(fileName);
     }
 
-    public final Dao getDatabaseDao(final String boardName) throws SudokuException {
-        return new JdbcSudokuBoardDao(boardName);
+    public final Dao getDatabaseDao(String name) throws SudokuException {
+        return new JdbcSudokuBoardDao(name);
     }
 }

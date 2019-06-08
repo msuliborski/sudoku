@@ -38,11 +38,8 @@
                 <Menu fx:id="database" mnemonicParsing="false" text="Database">
                     <items>
                         <MenuItem fx:id="dbsave" mnemonicParsing="false" onAction="#openSaveWindow" text="Save"/>
-                        <Menu fx:id="dbload" mnemonicParsing="false" text="Load">
-                            <items>
-<!--                                <MenuItem mnemonicParsing="false" text="No items"/>-->
-                            </items>
-                        </Menu>
+                        <MenuItem fx:id="dbload" mnemonicParsing="false" onAction="#openLoadWindow" text="Load"/>
+                        <MenuItem fx:id="dbdelete" mnemonicParsing="false" onAction="#openDeleteWindow" text="Delete"/>
                     </items>
                 </Menu>
 <!--                <Menu fx:id="dbMenu" mnemonicParsing="false" text="database">-->
