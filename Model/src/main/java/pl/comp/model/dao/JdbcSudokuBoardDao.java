@@ -31,7 +31,10 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard>, AutoCloseable {
             "FOREIGN KEY(boardID) REFERENCES boards(boardID)" +
             ")";
 
-        private static final String READ_ALL_BOARDS = "SELECT * FROM boards";
+    private static final String DROP_TABLE_BOARDS = "DROP TABLE IF EXISTS boards";
+    private static final String DROP_TABLE_FIELDS = "DROP TABLE IF EXISTS fields";
+    private static final String READ_ALL_BOARDS = "SELECT * FROM boards";
+    private static final String READ_ALL_FIELDS = "SELECT * FROM fields";
     private static final String READ_QUERY_FIELD = "SELECT * FROM fields WHERE [boardID]=?";
     private static final String WRITE_QUERY_BOARD = "INSERT INTO boards([boardID], [name], [creationDate]) VALUES(?, ?, strftime('%d/%m/%Y %H:%M:%S', 'now', 'localtime'))";
     private static final String WRITE_QUERY_FIELD = "INSERT INTO fields([x], [y], [value], [isDefault], [boardID]) VALUES(?, ?, ?, ?, ?)";
@@ -54,6 +57,10 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard>, AutoCloseable {
 //        }
         try {
             conn = DriverManager.getConnection(DB_URL);
+            stat = conn.createStatement();
+            stat.execute(DROP_TABLE_FIELDS);
+            stat = conn.createStatement();
+            stat.execute(DROP_TABLE_BOARDS);
             stat = conn.createStatement();
             stat.execute(CREATE_BOARDS_TABLE);
             stat = conn.createStatement();
@@ -84,6 +91,8 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard>, AutoCloseable {
             rs = pstmt.executeQuery();
             while (rs.next()) {
                 System.out.println("  read petla ");
+
+                System.out.println(rs.getInt(1) + "  " + rs.getInt(2) + "  " + rs.getInt(3) + "  " + rs.getInt(4) + "  ");
                 int x = rs.getInt(1);
                 int y = rs.getInt(2);
                 sudokuBoard.setFieldValue(x, y, rs.getInt(3));
@@ -93,13 +102,20 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard>, AutoCloseable {
             }
             return sudokuBoard;
         } catch (SQLException se) {
-            throw new DaoException(DaoException.SQL_ERROR);
+            System.out.println(se.toString()+"        read");
+//            throw new DaoException(DaoException.SQL_ERROR);
         }
+        return null;
     }
 
 
     @Override
     public void write(SudokuBoard sudokuBoard) throws DaoException { //add
+
+        System.out.println("  write ");
+
+        System.out.println(sudokuBoard.toString());
+
         if (sudokuBoard == null) {
             throw new DaoException(DaoException.NULL_BOARD);
         }
@@ -107,18 +123,17 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard>, AutoCloseable {
             delete();
             pstmt = conn.prepareStatement(WRITE_QUERY_BOARD);
             pstmt.setInt(1, boardID);
-            pstmt.setString(1, String.valueOf(boardID));
+            pstmt.setString(2, String.valueOf(boardID));
             pstmt.execute();
 
             pstmt = conn.prepareStatement(READ_ALL_BOARDS);
             rs = pstmt.executeQuery();
             while (rs.next()) {
-                System.out.println("  jakies boardy? ");
+                System.out.println("  znalazlem boarda o id " + rs.getInt(1));
             }
 
             for (int x = 0; x < 9; x++) {
                 for (int y = 0; y < 9; y++) {
-                    System.out.println("  fieldy ");
                     pstmt = conn.prepareStatement(WRITE_QUERY_FIELD);
                     pstmt.setInt(1, x);
                     pstmt.setInt(2, y);
@@ -129,7 +144,7 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard>, AutoCloseable {
                 }
             }
         } catch (SQLException se) {
-            System.out.println(se.toString());
+            System.out.println(se.toString()+"        write");
 //            throw new DaoException(DaoException.SQL_ERROR);
         }
     }
@@ -149,14 +164,18 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard>, AutoCloseable {
             }
             return Collections.unmodifiableList(list);
         } catch (SQLException | SudokuException e) {
-            throw new DaoException(DaoException.SQL_ERROR);
+            System.out.println(e.toString()+"        getall");
+//            throw new DaoException(DaoException.SQL_ERROR);
         }
+        return null;
     }
 
 
 
 
     public void delete() throws DaoException {
+
+        System.out.println("  delete ");
         try {
             pstmt = conn.prepareStatement(DELETE_QUERY_BOARD);
             pstmt.setInt(1, boardID);
@@ -166,7 +185,9 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard>, AutoCloseable {
             pstmt.executeUpdate();
 
         } catch (SQLException se) {
-            throw new DaoException(DaoException.SQL_ERROR);
+
+            System.out.println(se.toString()+"        delete");
+//            throw new DaoException(DaoException.SQL_ERROR);
         }
     }
 }

@@ -26,7 +26,7 @@ class JdbcSudokuBoardDaoTest {
 
             SudokuBoard sudokuBoard2 = d.read();
 
-//            assertEquals(sudokuBoard, sudokuBoard2);
+            assertEquals(sudokuBoard, sudokuBoard2);
         } catch (SudokuException e) {
             e.printStackTrace();
         }
