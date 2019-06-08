@@ -115,11 +115,15 @@ public class MainView implements Initializable {
                 boardTextFields.get(x).get(y).setText("");
             }
 
+        getLoadableBoards();
+    }
+
+    public void getLoadableBoards() {
         try {
             List<String[]> loadables = JdbcSudokuBoardDao.getAllBoardsAsStrings();
             if(loadables.size() > 0)
             {
-                load.getItems().remove(0);
+                load.getItems().removeAll();
                 for (String[] subMenu : loadables) {
                     load.getItems().add(new MenuItem(subMenu[0]+" "+subMenu[1]));
                 }
@@ -185,13 +189,21 @@ public class MainView implements Initializable {
     public void saveGame() {
         SudokuBoardDaoFactory factory = new SudokuBoardDaoFactory();
         if (sudokuBoard != null) {
-            factory.getFileDao("sudoku").write(sudokuBoard);
+            try {
+                factory.getFileDao("sudoku").write(sudokuBoard);
+            } catch (DaoException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     public void loadGame() throws IOException {
         SudokuBoardDaoFactory factory = new SudokuBoardDaoFactory();
-        sudokuBoard = (SudokuBoard) factory.getFileDao("sudoku").read();
+        try {
+            sudokuBoard = (SudokuBoard) factory.getFileDao("sudoku").read();
+        } catch (DaoException e) {
+            e.printStackTrace();
+        }
         reinitializeBoard();
     }
 
