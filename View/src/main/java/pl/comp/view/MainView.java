@@ -12,6 +12,8 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import javafx.util.converter.NumberStringConverter;
+import pl.comp.model.dao.JdbcSudokuBoardDao;
+import pl.comp.model.exceptions.DaoException;
 import pl.comp.model.sudoku.SudokuBoard;
 import pl.comp.model.dao.SudokuBoardDaoFactory;
 
@@ -34,7 +36,7 @@ public class MainView implements Initializable {
     public MenuItem startHard;
     public Menu file;
     public MenuItem save;
-    public MenuItem load;
+    public Menu load;
     public Menu language;
     private static final String BUNDLE_NAME = "LanguagePack";
     private List<List<TextField>> boardTextFields = new ArrayList<>();
@@ -64,7 +66,7 @@ public class MainView implements Initializable {
                 emptyTextField.setPrefWidth(100);
                 emptyTextField.setFont(Font.font("Verdana", 36));
                 emptyTextField.setTextFormatter(new TextFormatter<String>((TextFormatter.Change change) -> {
-                    if(change.getText().matches("[0-9]*") && !(change.getControlNewText().length() > 1)) {
+                    if (change.getText().matches("[0-9]*") && !(change.getControlNewText().length() > 1)) {
                         return change;
                     } else {
                         return null;
@@ -80,7 +82,7 @@ public class MainView implements Initializable {
                 Bindings.bindBidirectional(emptyTextField.textProperty(), boardIntegerProperties[x][y], new NumberStringConverter());
 
                 emptyTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-                    if (newValue.equals("")){
+                    if (newValue.equals("")) {
                         sudokuBoard.setFieldValue(finalY, finalX, 0);
                     } else {
                         sudokuBoard.setFieldValue(finalY, finalX, Integer.parseInt(newValue));
@@ -90,7 +92,7 @@ public class MainView implements Initializable {
                 int finalX1 = x;
                 int finalY1 = y;
                 boardIntegerProperties[x][y].addListener((observable, oldValue, newValue) -> {
-                    System.out.println(newValue.intValue()+"");
+                    System.out.println(newValue.intValue() + "");
                     if (newValue.intValue() == 0) {
                         emptyTextField.setText("");
                     } else {
@@ -109,8 +111,23 @@ public class MainView implements Initializable {
                 grid.add(emptyTextField, x, y);
             }
         for (int x = 0; x < 9; x++)
-            for (int y = 0; y < 9; y++)
+            for (int y = 0; y < 9; y++) {
                 boardTextFields.get(x).get(y).setText("");
+            }
+
+        try {
+            List<String[]> loadables = JdbcSudokuBoardDao.getAllBoardsAsStrings();
+            if(loadables.size() > 0)
+            {
+                load.getItems().remove(0);
+                for (String[] subMenu : loadables) {
+                    load.getItems().add(new MenuItem(subMenu[0]+" "+subMenu[1]));
+                }
+            }
+
+        } catch (DaoException e) {
+            e.printStackTrace();
+        }
     }
 
     public void setStage(Stage stage) {
@@ -190,20 +207,19 @@ public class MainView implements Initializable {
 
     void updateNames() {
 
-        if(isEnglish) {
+        if (isEnglish) {
             bundle = ResourceBundle.getBundle(BUNDLE_NAME);
-        }
-        else {
+        } else {
             bundle = ResourceBundle.getBundle(BUNDLE_NAME, new Locale("pl"));
         }
-            newGame.setText(bundle.getString("newGame"));
-            startEasy.setText(bundle.getString("startEasy"));
-            startMedium.setText(bundle.getString("startMedium"));
-            startHard.setText(bundle.getString("startHard"));
-            file.setText(bundle.getString("file"));
-            save.setText(bundle.getString("save"));
-            load.setText(bundle.getString("load"));
-            language.setText(bundle.getString("language"));
-            verifyButton.setText(bundle.getString("verifyButton"));
+        newGame.setText(bundle.getString("newGame"));
+        startEasy.setText(bundle.getString("startEasy"));
+        startMedium.setText(bundle.getString("startMedium"));
+        startHard.setText(bundle.getString("startHard"));
+        file.setText(bundle.getString("file"));
+        save.setText(bundle.getString("save"));
+        load.setText(bundle.getString("load"));
+        language.setText(bundle.getString("language"));
+        verifyButton.setText(bundle.getString("verifyButton"));
     }
 }
