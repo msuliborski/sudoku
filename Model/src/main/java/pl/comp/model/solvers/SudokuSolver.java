@@ -1,4 +1,4 @@
-package pl.comp.model.solver;
+package pl.comp.model.solvers;
 
 import pl.comp.model.sudoku.SudokuBoard;
 

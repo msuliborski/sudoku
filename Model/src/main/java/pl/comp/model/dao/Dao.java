@@ -1,8 +1,8 @@
 package pl.comp.model.dao;
 
-import java.io.IOException;
+import pl.comp.model.exceptions.DaoException;
 
 public interface Dao<T> {
-    T read() throws IOException;
-    void write(T obj);
+    T read() throws DaoException;
+    void write(T obj) throws DaoException;
 }

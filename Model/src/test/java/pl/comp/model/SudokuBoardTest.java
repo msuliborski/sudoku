@@ -3,17 +3,22 @@ package pl.comp.model;
 import org.junit.Test;
 import pl.comp.model.dao.FileSudokuBoardDao;
 import pl.comp.model.dao.SudokuBoardDaoFactory;
+import pl.comp.model.exceptions.DaoException;
+import pl.comp.model.exceptions.SudokuException;
 import pl.comp.model.sudoku.SudokuBoard;
 
-import java.util.logging.Logger;
+import java.util.logging.Level;
 
 import static org.junit.Assert.*;
 
 
 public class SudokuBoardTest {
 
+
     @Test
     public void testIfFillBoardGeneratesCorrectDigitsLayout() {
+
+
         SudokuBoard sudoku = new SudokuBoard();
 
         sudoku.fillSudoku(2);
@@ -66,30 +71,26 @@ public class SudokuBoardTest {
 
     }
 
-
-    private static final Logger LOGGER = Logger.getLogger("testLogger");
     @Test
     public void testIfSerializationWorks() {
-
         SudokuBoardDaoFactory factory = new SudokuBoardDaoFactory();
 
         FileSudokuBoardDao file = (FileSudokuBoardDao) factory.getFileDao("sudoku");
 
         SudokuBoard sudoku = new SudokuBoard(2);
 
-        file.write(sudoku);
+        try {
 
-        SudokuBoard sudokuFromFile = file.read();
-
-        assertEquals(sudoku, sudokuFromFile);
-
-
-
+            file.write(sudoku);
+            SudokuBoard sudokuFromFile = file.read();
+            assertEquals(sudoku, sudokuFromFile);
+        } catch (DaoException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
     public void testIfCloneWorks() {
-
         SudokuBoard sudokuBoard1 = new SudokuBoard(1);
         int help = sudokuBoard1.getFieldValue(0, 0);
         sudokuBoard1.setFieldValue(0, 0, 0);
@@ -98,9 +99,7 @@ public class SudokuBoardTest {
         assertNotSame(sudokuBoard1, sudokuBoard2);
         assertEquals(sudokuBoard1, sudokuBoard2);
 
-
         sudokuBoard1.setFieldValue(0, 0, help);
-
 
         assertNotSame(sudokuBoard1, sudokuBoard2);
         assertNotEquals(sudokuBoard1, sudokuBoard2);

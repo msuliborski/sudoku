@@ -1,9 +1,10 @@
 package pl.comp.model;
 
 import pl.comp.model.dao.SudokuBoardDaoFactory;
+import pl.comp.model.exceptions.SudokuException;
 import pl.comp.model.logs.FileAndConsoleLoggerFactory;
-import pl.comp.model.solver.BacktrackingSudokuSolver;
-import pl.comp.model.solver.SudokuSolver;
+import pl.comp.model.solvers.BacktrackingSudokuSolver;
+import pl.comp.model.solvers.SudokuSolver;
 import pl.comp.model.sudoku.SudokuBoard;
 
 import java.util.logging.Level;
@@ -22,6 +23,8 @@ public class Main {
 
         sudoku.fillSudoku(2);
 
+
+
         logger.log(Level.INFO, "Sudoku to solve:");
         logger.log(Level.INFO, sudoku.toString());
 
@@ -33,4 +36,6 @@ public class Main {
         logger.log(Level.INFO, sudoku.toString());
 
     }
+
+
 }

@@ -34,8 +34,6 @@ public class SudokuFieldTest {
         assertTrue(s2.compareTo(s1) < 0);
         assertTrue(s2.compareTo(s3) > 0);
         assertEquals(s1.compareTo(s1a), 0);
-
-
     }
 
     @Test

@@ -1,8 +1,8 @@
 package pl.comp.model.sudoku;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import pl.comp.model.solver.BacktrackingSudokuSolver;
-import pl.comp.model.solver.SudokuSolver;
+import pl.comp.model.solvers.BacktrackingSudokuSolver;
+import pl.comp.model.solvers.SudokuSolver;
 
 import java.io.*;
 import java.util.*;
