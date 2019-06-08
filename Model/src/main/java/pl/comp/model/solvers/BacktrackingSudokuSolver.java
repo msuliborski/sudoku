@@ -7,7 +7,6 @@ import java.util.Random;
 
 public class BacktrackingSudokuSolver implements SudokuSolver {
 
-
     @Override
     public boolean solveSudoku(final SudokuBoard board) {
 

@@ -4,18 +4,13 @@ import pl.comp.model.exceptions.DaoException;
 import pl.comp.model.sudoku.SudokuBoard;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 public class FileSudokuBoardDao implements Dao<SudokuBoard>, AutoCloseable{
 
     private String fileName;
-    private ObjectInputStream iStream;
-    private ObjectOutputStream oStream;
 
     FileSudokuBoardDao(String name) throws DaoException {
         if (name == null) {
-            fileName = "default";
             throw new DaoException(DaoException.NULL_NAME);
         }
         fileName = name;
@@ -45,7 +40,7 @@ public class FileSudokuBoardDao implements Dao<SudokuBoard>, AutoCloseable{
     }
 
     @Override
-    public final void close() throws IOException {
+    public final void close() {
     }
 
     @Override

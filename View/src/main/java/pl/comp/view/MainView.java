@@ -16,9 +16,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import javafx.util.converter.NumberStringConverter;
-import pl.comp.model.dao.JdbcSudokuBoardDao;
 import pl.comp.model.exceptions.DaoException;
-import pl.comp.model.exceptions.SudokuException;
 import pl.comp.model.sudoku.SudokuBoard;
 import pl.comp.model.dao.SudokuBoardDaoFactory;
 
@@ -50,10 +48,8 @@ public class MainView implements Initializable {
     private static final String BUNDLE_NAME = "interfaceLanguage";
     private List<List<TextField>> boardTextFields = new ArrayList<>();
     private SimpleIntegerProperty[][] boardIntegerProperties = new SimpleIntegerProperty[9][9];
-    public static boolean isEnglish = true;
-    ResourceBundle bundle;
-
-
+    static boolean isEnglish = true;
+    private ResourceBundle bundle;
 
     private static MainView instance;
 
@@ -65,12 +61,24 @@ public class MainView implements Initializable {
         }
     }
 
+    public static MainView getInstance() {
+        return instance;
+    }
+
     public static SudokuBoard getSudokuBoard() {
         return sudokuBoard;
     }
 
     public void setSudokuBoard(SudokuBoard sb) {
         sudokuBoard = sb;
+    }
+
+    public void setStage(Stage stage) {
+        this.stage = stage;
+    }
+
+    public ResourceBundle getCurrentBundle() {
+        return bundle;
     }
 
     @Override
@@ -100,14 +108,10 @@ public class MainView implements Initializable {
                     }
                 }));
 
-
                 int finalX = x;
                 int finalY = y;
-
-
                 boardIntegerProperties[x][y] = new SimpleIntegerProperty();
                 Bindings.bindBidirectional(emptyTextField.textProperty(), boardIntegerProperties[x][y], new NumberStringConverter());
-
                 emptyTextField.textProperty().addListener((observable, oldValue, newValue) -> {
                     if (newValue.equals("")) {
                         sudokuBoard.setFieldValue(finalY, finalX, 0);
@@ -116,15 +120,13 @@ public class MainView implements Initializable {
                     }
                 });
 
-                int finalX1 = x;
-                int finalY1 = y;
                 boardIntegerProperties[x][y].addListener((observable, oldValue, newValue) -> {
                     if (newValue.intValue() == 0) {
                         emptyTextField.setText("");
                     } else {
                         emptyTextField.setText(String.valueOf(newValue));
                     }
-                    if (sudokuBoard.isFieldDefault(finalY1, finalX1)) {
+                    if (sudokuBoard.isFieldDefault(finalY, finalX)) {
                         emptyTextField.setStyle("-fx-text-fill: grey;");
                         emptyTextField.setEditable(false);
                     } else {
@@ -141,32 +143,6 @@ public class MainView implements Initializable {
                 boardTextFields.get(x).get(y).setText("");
             }
     }
-
-    public void setStage(Stage stage) {
-        this.stage = stage;
-    }
-
-
-    public static MainView getInstance() {
-        return instance;
-
-    }
-
-//    public void getLoadableBoards() {
-//        try {
-//            List<String[]> loadables = JdbcSudokuBoardDao.getAllBoardsAsStrings();
-//            if (loadables.size() > 0) {
-//                dbload.getItems().removeAll();
-//
-//                for (String[] subMenu : loadables) {
-//                    dbload.getItems().add(new MenuItem(subMenu[0] + " " + subMenu[1]));
-//                }
-//            }
-//
-//        } catch (DaoException e) {
-//            e.printStackTrace();
-//        }
-//    }
 
     public void reinitializeBoard() {
         for (int x = 0; x < 9; x++) {
@@ -190,7 +166,6 @@ public class MainView implements Initializable {
 
     public void startGame(int difficulty) {
         sudokuBoard = new SudokuBoard(difficulty);
-        //this.updateGridView();
         reinitializeBoard();
         verifyButton.setText(bundle.getString("verifyButton"));
         verifyButton.setTextFill(Color.BLACK);
@@ -232,25 +207,6 @@ public class MainView implements Initializable {
         reinitializeBoard();
     }
 
-    public void dbsaveGame() throws SudokuException {
-        //zapytaj o nazwe
-        String name = "default";
-        SudokuBoardDaoFactory factory = new SudokuBoardDaoFactory();
-        if (sudokuBoard != null) {
-            factory.getDatabaseDao(name).write(sudokuBoard);
-        }
-    }
-
-    public void dbloadGame() throws SudokuException {
-        SudokuBoardDaoFactory factory = new SudokuBoardDaoFactory();
-        try {
-            sudokuBoard = (SudokuBoard) factory.getFileDao("sudoku").read();
-        } catch (DaoException e) {
-            e.printStackTrace();
-        }
-        reinitializeBoard();
-    }
-
     public void setPl() {
         isEnglish = false;
         updateNames();
@@ -262,7 +218,6 @@ public class MainView implements Initializable {
     }
 
     public void updateNames() {
-
         if (isEnglish) {
             bundle = ResourceBundle.getBundle(BUNDLE_NAME);
         } else {
@@ -283,12 +238,7 @@ public class MainView implements Initializable {
         verifyButton.setText(bundle.getString("verifyButton"));
     }
 
-    @SuppressWarnings("Duplicates")
-    public void openSaveWindow () throws IOException {
-//        URL location = getClass().getResource("/pl/compprog/gui/DbSaveDialogue.fxml");
-////        FXMLLoader fxmlLoader = new FXMLLoader(location);
-////        fxmlLoader.setResources(ResourceBundle.getBundle(BUNDLE_NAME, new Locale("en")));
-////        Parent root = fxmlLoader.load();
+    public void openSaveWindow() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("DbSaveDialogue.fxml"));
 
         Parent root = fxmlLoader.load();
@@ -298,12 +248,7 @@ public class MainView implements Initializable {
         stage.show();
     }
 
-    @SuppressWarnings("Duplicates")
-    public void openLoadWindow () throws IOException {
-//        URL location = getClass().getResource("/pl/compprog/gui/DbSaveDialogue.fxml");
-////        FXMLLoader fxmlLoader = new FXMLLoader(location);
-////        fxmlLoader.setResources(ResourceBundle.getBundle(BUNDLE_NAME, new Locale("en")));
-////        Parent root = fxmlLoader.load();
+    public void openLoadWindow() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("DbLoadDialogue.fxml"));
 
         Parent root = fxmlLoader.load();
@@ -312,12 +257,8 @@ public class MainView implements Initializable {
         stage.setScene(new Scene(root));
         stage.show();
     }
-@SuppressWarnings("Duplicates")
-    public void openDeleteWindow () throws IOException {
-//        URL location = getClass().getResource("/pl/compprog/gui/DbSaveDialogue.fxml");
-////        FXMLLoader fxmlLoader = new FXMLLoader(location);
-////        fxmlLoader.setResources(ResourceBundle.getBundle(BUNDLE_NAME, new Locale("en")));
-////        Parent root = fxmlLoader.load();
+
+    public void openDeleteWindow() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("DbDeleteDialogue.fxml"));
 
         Parent root = fxmlLoader.load();
@@ -325,76 +266,5 @@ public class MainView implements Initializable {
         stage.setTitle(bundle.getString("deleteDialogue"));
         stage.setScene(new Scene(root));
         stage.show();
-    }
-
-    @SuppressWarnings("Duplicates")
-    public void loadFromDbAction(ActionEvent actionEvent) throws IOException {
-        URL location = getClass().getResource("/pl/compprog/gui/DbLoadDialogue.fxml");
-        FXMLLoader fxmlLoader = new FXMLLoader(location);
-        fxmlLoader.setResources(ResourceBundle.getBundle("i18n.SudokuBundle", new Locale("en", "EN")));
-        Parent root = fxmlLoader.load();
-
-        Scene secondScene = new Scene(root);
-        // New window (Stage)
-        Stage newWindow = new Stage();
-        newWindow.setTitle(bundle.getString("db_load_dialogue"));
-        newWindow.setScene(secondScene);
-        // Specifies the modality for new window.
-        newWindow.initModality(Modality.WINDOW_MODAL);
-        // Specifies the owner Window (parent) for new window
-        newWindow.initOwner(stage);
-        // Set position of second window, related to primary window.
-        newWindow.setX(stage.getX() + 50);
-        newWindow.setY(stage.getY() + 200);
-        newWindow.show();
-    }
-
-    @SuppressWarnings("Duplicates")
-    public void saveToDbAction(ActionEvent actionEvent) throws IOException {
-        URL location = getClass().getResource("/pl/compprog/gui/DbSaveDialogue.fxml");
-        FXMLLoader fxmlLoader = new FXMLLoader(location);
-        fxmlLoader.setResources(ResourceBundle.getBundle("i18n.SudokuBundle", new Locale("en", "EN")));
-        Parent root = fxmlLoader.load();
-
-        Scene secondScene = new Scene(root);
-        // New window (Stage)
-        Stage newWindow = new Stage();
-        newWindow.setTitle(bundle.getString("db_save_dialogue"));
-        newWindow.setScene(secondScene);
-        // Specifies the modality for new window.
-        newWindow.initModality(Modality.WINDOW_MODAL);
-        // Specifies the owner Window (parent) for new window
-        newWindow.initOwner(stage);
-        // Set position of second window, related to primary window.
-        newWindow.setX(stage.getX() + 50);
-        newWindow.setY(stage.getY() + 200);
-        newWindow.show();
-    }
-
-    @SuppressWarnings("Duplicates")
-    public void deleteFromDbAction(ActionEvent actionEvent) throws IOException {
-        URL location = getClass().getResource("/pl/compprog/gui/DbDeleteDialogue.fxml");
-        FXMLLoader fxmlLoader = new FXMLLoader(location);
-        fxmlLoader.setResources(ResourceBundle.getBundle("i18n.SudokuBundle", new Locale("en", "EN")));
-        Parent root = fxmlLoader.load();
-        Scene secondScene = new Scene(root);
-        // New window (Stage)
-        Stage newWindow = new Stage();
-        newWindow.setTitle(bundle.getString("db_delete_dialogue"));
-        newWindow.setScene(secondScene);
-        // Specifies the modality for new window.
-        newWindow.initModality(Modality.WINDOW_MODAL);
-        // Specifies the owner Window (parent) for new window
-        newWindow.initOwner(stage);
-        // Set position of second window, related to primary window.
-        newWindow.setX(stage.getX() + 50);
-        newWindow.setY(stage.getY() + 200);
-        newWindow.show();
-    }
-
-
-
-    public ResourceBundle getCurrentBundle() {
-        return bundle;
     }
 }

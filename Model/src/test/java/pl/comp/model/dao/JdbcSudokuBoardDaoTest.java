@@ -4,119 +4,63 @@ import org.junit.jupiter.api.Test;
 import pl.comp.model.exceptions.DaoException;
 import pl.comp.model.exceptions.SudokuException;
 import pl.comp.model.logs.FileAndConsoleLoggerFactory;
+import pl.comp.model.solvers.BacktrackingSudokuSolver;
+import pl.comp.model.solvers.SudokuSolver;
 import pl.comp.model.sudoku.SudokuBoard;
 
-import java.sql.SQLException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
 class JdbcSudokuBoardDaoTest {
-
-    private static final Logger logger = FileAndConsoleLoggerFactory.getConfiguredLogger(JdbcSudokuBoardDao.class.getName());
-
 
     @Test
     public void testCreateDaoWithNullName() {
-        SudokuBoard sudokuBoard = new SudokuBoard(2);
-        try {
-            JdbcSudokuBoardDao d = new JdbcSudokuBoardDao("sudoku");
-//            d.resetTables();
-//d.resetTables();
-            d.write(sudokuBoard);
-//
-//            SudokuBoard sudokuBoard2 = d.read();
-//
-//
-//
-//            List<String[]> dsa = d.getAllBoardsAsStrings();
-//            for(String[] asd : dsa){
-//                System.out.println("michał: "+asd[0] + " " +asd[1]);
-//            }
+        assertThrows(DaoException.class, () -> new JdbcSudokuBoardDao(null));
+    }
 
-//            assertEquals(sudokuBoard, sudokuBoard2);
-        } catch (SudokuException e) {
+    @Test
+    public void testWriteNullBoard() {
+        try (JdbcSudokuBoardDao dao = new JdbcSudokuBoardDao("sudoku")) {
+            assertThrows(DaoException.class, () -> dao.write(null));
+        } catch (DaoException e) {
             e.printStackTrace();
         }
     }
 
+    @Test
+    public void readAndWriteBoardTest() {
+        SudokuBoard sudokuBoard1 = new SudokuBoard();
+        SudokuSolver solver = new BacktrackingSudokuSolver();
+        solver.solveSudoku(sudokuBoard1);
 
-//    @Test
-//    public void testCreateDaoWithNullName() {
-//        boolean[][] temp = new boolean[9][9];
-//        assertThrows(DaoException.class, () -> new JdbcSudokuBoardDao("sudoku"));
-//    }
-//
-//
-//    @Test
-//    public void testWriteNullBoard() {
-//        boolean[][] temp = new boolean[9][9];
-//        try (JdbcSudokuBoardDao dao = new JdbcSudokuBoardDao("suodku))
-//        {
-//            assertThrows(DaoException.class, () -> dao.writeEx(null));
-//        } catch (ApplicationException | SQLException ex) {
-//            ex.printStackTrace();
-//        }
-//    }
-//
-//
-//    @Test
-//    public void readAndWriteBoardTest() {
-//        SudokuBoard sudokuBoard1 = new SudokuBoard();
-//
-//        SudokuSolver solver = new BacktrackingSudokuSolver();
-//        solver.solve(sudokuBoard1);
-//        boolean[][] wasGenerated1 = new boolean[9][9];
-//        for (int i = 0; i < wasGenerated1.length; i++) {
-//            for (int j  = 0; j < wasGenerated1[0].length; j++) {
-//                wasGenerated1[i][j] = true;
-//            }
-//        }
-//        logger.log(Level.INFO, sudokuBoard1.toString());
-//        SudokuBoardDaoFactory sudokuBoardDaoFactory = new SudokuBoardDaoFactory();
-//        try(JdbcSudokuBoardDao dao = (JdbcSudokuBoardDao) sudokuBoardDaoFactory.getDatabaseDao("sudokuBoard", wasGenerated1)) {
-//            dao.writeEx(sudokuBoard1);
-//            SudokuBoard sudokuBoard2 = dao.readEx();
-//            boolean[][] wasGenerated2 = dao.getWasGenerated();
-//            assertEquals(sudokuBoard1, sudokuBoard2);
-//            assertEquals(wasGenerated1.length, wasGenerated2.length);
-//            for (int i = 0; i < wasGenerated1.length; i++) {
-//                assertArrayEquals(wasGenerated1[i], wasGenerated2[i]);
-//            }
-//            dao.deleteEx();
-//        }
-//        catch (ApplicationException | SQLException ex) {
-//            ex.printStackTrace();
-//        }
-//    }
-//
-//    @Test
-//    public void displayAllTest() {
-//        SudokuBoard sudokuBoard1 = new SudokuBoard();
-//        SudokuSolver solver = new BacktrackingSudokuSolver();
-//        solver.solve(sudokuBoard1);
-//        boolean[][] wasGenerated1 = new boolean[9][9];
-//        for (int i = 0; i < wasGenerated1.length; i++) {
-//            for (int j  = 0; j < wasGenerated1[0].length; j++) {
-//                wasGenerated1[i][j] = true;
-//            }
-//        }
-//        SudokuBoardDaoFactory sudokuBoardDaoFactory = new SudokuBoardDaoFactory();
-//        try(JdbcSudokuBoardDao dao = (JdbcSudokuBoardDao) sudokuBoardDaoFactory.getDatabaseDao("sudokuBoard", wasGenerated1)) {
-//            dao.writeEx(sudokuBoard1);
-//            List<String[]> list = JdbcSudokuBoardDao.getAllBoardsAsStrings();
-//            assertEquals(1, list.size());
-//            String[] array = list.get(0);
-//            assertEquals("sudokuBoard", array[0]);
-//            logger.log(Level.INFO, array[1]);
-//            dao.deleteEx();
-//        }
-//        catch (ApplicationException | SQLException ex) {
-//            ex.printStackTrace();
-//        }
-//    }
+        SudokuBoardDaoFactory sudokuBoardDaoFactory = new SudokuBoardDaoFactory();
+        try (JdbcSudokuBoardDao dao = (JdbcSudokuBoardDao) sudokuBoardDaoFactory.getDatabaseDao("sudoku")) {
+            dao.write(sudokuBoard1);
+            SudokuBoard sudokuBoard2 = dao.read();
+            assertEquals(sudokuBoard1, sudokuBoard2);
+            dao.delete();
+        } catch (DaoException e) {
+            e.printStackTrace();
+        }
+    }
 
+    @Test
+    public void displayAllTest() {
+        SudokuBoard sudokuBoard1 = new SudokuBoard();
+        SudokuSolver solver = new BacktrackingSudokuSolver();
+        solver.solveSudoku(sudokuBoard1);
+
+        SudokuBoardDaoFactory sudokuBoardDaoFactory = new SudokuBoardDaoFactory();
+        try (JdbcSudokuBoardDao dao = (JdbcSudokuBoardDao) sudokuBoardDaoFactory.getDatabaseDao("sudoku")) {
+            dao.write(sudokuBoard1);
+            List<String[]> list = dao.getAllBoardsAsStrings();
+            assertEquals(1, list.size());
+            String[] array = list.get(0);
+            assertEquals("sudoku", array[0]);
+            dao.delete();
+        } catch (DaoException e) {
+            e.printStackTrace();
+        }
+    }
 }

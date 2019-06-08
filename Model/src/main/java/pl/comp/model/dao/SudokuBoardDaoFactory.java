@@ -1,9 +1,6 @@
 package pl.comp.model.dao;
 
-import pl.comp.model.dao.Dao;
-import pl.comp.model.dao.FileSudokuBoardDao;
 import pl.comp.model.exceptions.DaoException;
-import pl.comp.model.exceptions.SudokuException;
 
 public class SudokuBoardDaoFactory {
 
@@ -11,7 +8,7 @@ public class SudokuBoardDaoFactory {
         return new FileSudokuBoardDao(fileName);
     }
 
-    public final Dao getDatabaseDao(String name) throws SudokuException {
+    public final Dao getDatabaseDao(String name) throws DaoException {
         return new JdbcSudokuBoardDao(name);
     }
 }

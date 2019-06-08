@@ -4,23 +4,15 @@ import org.junit.Test;
 import pl.comp.model.dao.FileSudokuBoardDao;
 import pl.comp.model.dao.SudokuBoardDaoFactory;
 import pl.comp.model.exceptions.DaoException;
-import pl.comp.model.exceptions.SudokuException;
-import pl.comp.model.sudoku.SudokuBoard;
-
-import java.util.logging.Level;
 
 import static org.junit.Assert.*;
 
-
 public class SudokuBoardTest {
-
 
     @Test
     public void testIfFillBoardGeneratesCorrectDigitsLayout() {
 
-
         SudokuBoard sudoku = new SudokuBoard();
-
         sudoku.fillSudoku(2);
 
         boolean test = false;
@@ -66,9 +58,7 @@ public class SudokuBoardTest {
                 boardstring2.append(sudoku.getFieldValue(x, y));
             }
         }
-
         assertNotEquals(boardstring1.toString(), boardstring2.toString());
-
     }
 
     @Test
@@ -81,7 +71,6 @@ public class SudokuBoardTest {
         } catch (DaoException e) {
             e.printStackTrace();
         }
-
         SudokuBoard sudoku = new SudokuBoard(2);
 
         try {

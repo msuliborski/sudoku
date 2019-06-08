@@ -1,8 +1,6 @@
 package pl.comp.model.sudoku;
 
 import org.junit.Test;
-import pl.comp.model.sudoku.SudokuField;
-import pl.comp.model.sudoku.SudokuRow;
 
 import static org.junit.Assert.*;
 
