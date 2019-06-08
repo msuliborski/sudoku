@@ -6,6 +6,9 @@ import pl.comp.model.logs.FileAndConsoleLoggerFactory;
 import pl.comp.model.sudoku.SudokuBoard;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.logging.Logger;
 
 public class JdbcSudokuBoardDao implements Dao<SudokuBoard>, AutoCloseable {
@@ -15,7 +18,7 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard>, AutoCloseable {
     private static final String DB_URL = "jdbc:sqlite:SudokuBoards.db";
 
     private static final String CREATE_BOARDS_TABLE = "CREATE TABLE IF NOT EXISTS boards (" +
-            "[boardID] INTEGER PRIMARY KEY AUTOINCREMENT," +
+            "[boardID] INTEGER PRIMARY KEY," +
             "[name] VARCHAR(255)," +
             "[creationDate] VARCHAR(255)" +
             ")";
@@ -28,8 +31,8 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard>, AutoCloseable {
             "FOREIGN KEY(boardID) REFERENCES boards(boardID)" +
             ")";
 
-//    private static final String READ_ALL_BOARDS = "SELECT * FROM boards";
-//    private static final String READ_QUERY_FIELD = "SELECT * FROM fields WHERE [name]=?";
+        private static final String READ_ALL_BOARDS = "SELECT * FROM boards";
+    private static final String READ_QUERY_FIELD = "SELECT * FROM fields WHERE [boardID]=?";
     private static final String WRITE_QUERY_BOARD = "INSERT INTO boards([name], [creationDate]) VALUES(?, strftime('%d/%m/%Y %H:%M:%S', 'now', 'localtime'))";
     private static final String WRITE_QUERY_FIELD = "INSERT INTO fields([x], [y], [value], [isDefault]) VALUES(?, ?, ?, ?)";
 //    private static final String DELETE_QUERY_BOARD = "DELETE FROM boards WHERE [name]=?";
@@ -39,12 +42,11 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard>, AutoCloseable {
     private Statement stat;
     private PreparedStatement pstmt;
     private ResultSet rs;
-    private String boardName;
+    private int boardID;
 
 
-
-    public JdbcSudokuBoardDao(final String boardName) throws SudokuException {
-        if (boardName == null) {
+    public JdbcSudokuBoardDao(final String name) throws SudokuException {
+        if (name == null) {
             throw new DaoException(DaoException.NULL_NAME);
         }
 //        if (wasGenerated == null) {
@@ -59,7 +61,7 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard>, AutoCloseable {
         } catch (SQLException se) {
             throw new DaoException(DaoException.SQL_ERROR);
         }
-        this.boardName = boardName;
+        this.boardID = name.hashCode();
     }
 
     @Override
@@ -72,14 +74,34 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard>, AutoCloseable {
     }
 
     @Override
+    public SudokuBoard read() throws DaoException {
+//        try {
+//            SudokuBoard sudokuBoard = new SudokuBoard();
+//            pstmt = conn.prepareStatement(READ_QUERY_FIELD);
+//            pstmt.setString(1, String.valueOf(boardID));
+//            rs = pstmt.executeQuery();
+//            while (rs.next()) {
+//                int x = rs.getInt(2);
+//                int y = rs.getInt(3);
+//                sudokuBoard.unsafeSet(x, y, rs.getInt(4));
+//                wasGenerated[y][x] = rs.getInt(5) == 1;
+//            }
+//            return sudokuBoard;
+//        } catch (SQLException se) {
+//            throw new DaoException(DaoException.SQL_ERROR);
+//        }
+    }
+
+
+    @Override
     public void write(SudokuBoard sudokuBoard) throws DaoException { //add
         if (sudokuBoard == null) {
             throw new DaoException(DaoException.NULL_BOARD);
         }
-        try  {
+        try {
 //            delete();
             pstmt = conn.prepareStatement(WRITE_QUERY_BOARD);
-            pstmt.setString(1, boardName);
+            pstmt.setString(1, String.valueOf(boardID));
             pstmt.execute();
 
             for (int x = 0; x < 9; x++) {
@@ -98,47 +120,24 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard>, AutoCloseable {
     }
 
 
-//    public static List<String[]> getAllBoardsAsStrings() throws DaoException {
-//        try  {
-//            List<String[]> list = new ArrayList<>();
-//            JdbcSudokuBoardDao jdbcSudokuBoardDao = new JdbcSudokuBoardDao("temp", new boolean[0][0]);
-//            jdbcSudokuBoardDao.pstmt = jdbcSudokuBoardDao.conn.prepareStatement(READ_ALL_BOARDS);
-//            jdbcSudokuBoardDao.rs = jdbcSudokuBoardDao.pstmt.executeQuery();
-//            while (jdbcSudokuBoardDao.rs.next()) {
-//                String[] array = new String[2];
-//                array[0] = jdbcSudokuBoardDao.rs.getString(1);
-//                array[1] = jdbcSudokuBoardDao.rs.getString(2);
-//                list.add(array);
-//            }
-//            return Collections.unmodifiableList(list);
-//        } catch (SQLException | SudokuException e) {
-//            throw new DaoException(DaoException.SQL_ERROR);
-//        }
-//    }
-//
-//    @Override
-//    public SudokuBoard read() throws DaoException {
-//        try  {
-//            SudokuBoard sudokuBoard = new SudokuBoard();
-//            pstmt = conn.prepareStatement(READ_QUERY_FIELD);
-//            pstmt.setString(1, boardName);
-//            rs = pstmt.executeQuery();
-//            while(rs.next()) {
-//                int x = rs.getInt(2);
-//                int y = rs.getInt(3);
-//                sudokuBoard.unsafeSet(x, y, rs.getInt(4));
-//                wasGenerated[y][x] = rs.getInt(5) == 1;
-//            }
-//            return sudokuBoard;
-//        } catch (SQLException se) {
-//            throw new DaoException(DaoException.SQL_ERROR);
-//        }
-//    }
-
-    @Override
-    public SudokuBoard read() throws DaoException {
-        return null;
+    public static List<String[]> getAllBoardsAsStrings() throws DaoException {
+        try  {
+            List<String[]> list = new ArrayList<>();
+            JdbcSudokuBoardDao jdbcSudokuBoardDao = new JdbcSudokuBoardDao("temp");
+            jdbcSudokuBoardDao.pstmt = jdbcSudokuBoardDao.conn.prepareStatement(READ_ALL_BOARDS);
+            jdbcSudokuBoardDao.rs = jdbcSudokuBoardDao.pstmt.executeQuery();
+            while (jdbcSudokuBoardDao.rs.next()) {
+                String[] array = new String[2];
+                array[0] = jdbcSudokuBoardDao.rs.getString(1);
+                array[1] = jdbcSudokuBoardDao.rs.getString(2);
+                list.add(array);
+            }
+            return Collections.unmodifiableList(list);
+        } catch (SQLException | SudokuException e) {
+            throw new DaoException(DaoException.SQL_ERROR);
+        }
     }
+
 
 
 //
