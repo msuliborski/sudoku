@@ -13,8 +13,11 @@ public class FileSudokuBoardDao implements Dao<SudokuBoard>, AutoCloseable{
     private ObjectInputStream iStream;
     private ObjectOutputStream oStream;
 
-    FileSudokuBoardDao(String name)
-    {
+    FileSudokuBoardDao(String name) throws DaoException {
+        if (name == null) {
+            fileName = "default";
+            throw new DaoException(DaoException.NULL_NAME);
+        }
         fileName = name;
     }
 

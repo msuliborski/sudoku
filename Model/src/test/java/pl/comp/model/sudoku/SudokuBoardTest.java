@@ -1,4 +1,4 @@
-package pl.comp.model;
+package pl.comp.model.sudoku;
 
 import org.junit.Test;
 import pl.comp.model.dao.FileSudokuBoardDao;
@@ -75,7 +75,12 @@ public class SudokuBoardTest {
     public void testIfSerializationWorks() {
         SudokuBoardDaoFactory factory = new SudokuBoardDaoFactory();
 
-        FileSudokuBoardDao file = (FileSudokuBoardDao) factory.getFileDao("sudoku");
+        FileSudokuBoardDao file = null;
+        try {
+            file = (FileSudokuBoardDao) factory.getFileDao("sudoku");
+        } catch (DaoException e) {
+            e.printStackTrace();
+        }
 
         SudokuBoard sudoku = new SudokuBoard(2);
 
