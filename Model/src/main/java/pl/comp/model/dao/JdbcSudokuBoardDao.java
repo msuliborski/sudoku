@@ -59,7 +59,8 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard>, AutoCloseable {
             stat = conn.createStatement();
             stat.execute(CREATE_FIELDS_TABLE);
         } catch (SQLException se) {
-            throw new DaoException(DaoException.SQL_ERROR);
+//            throw new DaoException(DaoException.SQL_ERROR, se);
+            System.out.println(se.toString());
         }
         this.boardID = name.hashCode();
     }
@@ -75,21 +76,21 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard>, AutoCloseable {
 
     @Override
     public SudokuBoard read() throws DaoException {
-//        try {
-//            SudokuBoard sudokuBoard = new SudokuBoard();
-//            pstmt = conn.prepareStatement(READ_QUERY_FIELD);
-//            pstmt.setString(1, String.valueOf(boardID));
-//            rs = pstmt.executeQuery();
-//            while (rs.next()) {
-//                int x = rs.getInt(2);
-//                int y = rs.getInt(3);
-//                sudokuBoard.unsafeSet(x, y, rs.getInt(4));
-//                wasGenerated[y][x] = rs.getInt(5) == 1;
-//            }
-//            return sudokuBoard;
-//        } catch (SQLException se) {
-//            throw new DaoException(DaoException.SQL_ERROR);
-//        }
+        try {
+            SudokuBoard sudokuBoard = new SudokuBoard();
+            pstmt = conn.prepareStatement(READ_QUERY_FIELD);
+            pstmt.setString(1, String.valueOf(boardID));
+            rs = pstmt.executeQuery();
+            while (rs.next()) {
+                int x = rs.getInt(1);
+                int y = rs.getInt(2);
+                sudokuBoard.setFieldValue(x, y, rs.getInt(3));
+                sudokuBoard.getField(x, y).setDefault(rs.getBoolean(4));
+            }
+            return sudokuBoard;
+        } catch (SQLException se) {
+            throw new DaoException(DaoException.SQL_ERROR);
+        }
     }
 
 

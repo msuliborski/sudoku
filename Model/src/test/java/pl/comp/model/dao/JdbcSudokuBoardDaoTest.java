@@ -21,11 +21,15 @@ class JdbcSudokuBoardDaoTest {
     public void testCreateDaoWithNullName() {
         SudokuBoard sudokuBoard = new SudokuBoard(2);
         try {
-            JdbcSudokuBoardDao d = new JdbcSudokuBoardDao(null);
+            JdbcSudokuBoardDao d = new JdbcSudokuBoardDao("jdbc");
             d.write(sudokuBoard);
+
+            SudokuBoard sudokuBoard2 = d.read();
+
+            assertEquals(sudokuBoard, sudokuBoard2);
         } catch (SudokuException e) {
             e.printStackTrace();
-        };
+        }
     }
 
 

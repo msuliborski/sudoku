@@ -40,6 +40,5 @@ public class DaoException extends SudokuException {
             message = "No resource for " + getMessage() + "key";
         }
         return message;
-
     }
 }
