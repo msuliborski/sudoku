@@ -151,6 +151,7 @@ public class MainView implements Initializable {
 
     public static MainView getInstance() {
         return instance;
+
     }
 
     public void getLoadableBoards() {
@@ -158,6 +159,7 @@ public class MainView implements Initializable {
             List<String[]> loadables = JdbcSudokuBoardDao.getAllBoardsAsStrings();
             if (loadables.size() > 0) {
                 dbload.getItems().removeAll();
+
                 for (String[] subMenu : loadables) {
                     dbload.getItems().add(new MenuItem(subMenu[0] + " " + subMenu[1]));
                 }
@@ -219,7 +221,11 @@ public class MainView implements Initializable {
     public void saveGame() throws DaoException {
         SudokuBoardDaoFactory factory = new SudokuBoardDaoFactory();
         if (sudokuBoard != null) {
-            factory.getFileDao("sudoku").write(sudokuBoard);
+            try {
+                factory.getFileDao("sudoku").write(sudokuBoard);
+            } catch (DaoException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -240,7 +246,11 @@ public class MainView implements Initializable {
 
     public void dbloadGame() throws SudokuException {
         SudokuBoardDaoFactory factory = new SudokuBoardDaoFactory();
-        sudokuBoard = (SudokuBoard) factory.getFileDao("sudoku").read();
+        try {
+            sudokuBoard = (SudokuBoard) factory.getFileDao("sudoku").read();
+        } catch (DaoException e) {
+            e.printStackTrace();
+        }
         reinitializeBoard();
     }
 
