@@ -3,17 +3,22 @@ package pl.comp.view;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import javafx.util.converter.NumberStringConverter;
 import pl.comp.model.dao.JdbcSudokuBoardDao;
 import pl.comp.model.exceptions.DaoException;
+import pl.comp.model.exceptions.SudokuException;
 import pl.comp.model.sudoku.SudokuBoard;
 import pl.comp.model.dao.SudokuBoardDaoFactory;
 
@@ -26,6 +31,7 @@ import java.util.ResourceBundle;
 
 public class MainView implements Initializable {
 
+    private static SudokuBoard sudokuBoard;
     private Stage stage;
 
     public GridPane grid;
@@ -36,15 +42,36 @@ public class MainView implements Initializable {
     public MenuItem startHard;
     public Menu file;
     public MenuItem save;
-    public Menu load;
+    public MenuItem load;
+    public Menu databse;
+    public MenuItem dbsave;
+    public Menu dbload;
     public Menu language;
-    private static final String BUNDLE_NAME = "LanguagePack";
+    private static final String BUNDLE_NAME = "interfaceLanguage";
     private List<List<TextField>> boardTextFields = new ArrayList<>();
     private SimpleIntegerProperty[][] boardIntegerProperties = new SimpleIntegerProperty[9][9];
     private static boolean isEnglish = true;
     ResourceBundle bundle;
 
-    private SudokuBoard sudokuBoard;
+
+
+    private static MainView instance;
+
+    public MainView() {
+        if (instance == null) {
+            instance = this;
+        } else {
+            throw new RuntimeException("MainView already created!");
+        }
+    }
+
+    public static SudokuBoard getSudokuBoard() {
+        return sudokuBoard;
+    }
+
+    public void setSudokuBoard(SudokuBoard sb) {
+        sudokuBoard = sb;
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -114,24 +141,31 @@ public class MainView implements Initializable {
             for (int y = 0; y < 9; y++) {
                 boardTextFields.get(x).get(y).setText("");
             }
+        getLoadableBoards();
+    }
 
+    public void setStage(Stage stage) {
+        this.stage = stage;
+    }
+
+
+    public static MainView getInstance() {
+        return instance;
+    }
+
+    public void getLoadableBoards() {
         try {
             List<String[]> loadables = JdbcSudokuBoardDao.getAllBoardsAsStrings();
-            if(loadables.size() > 0)
-            {
-                load.getItems().remove(0);
+            if (loadables.size() > 0) {
+                dbload.getItems().removeAll();
                 for (String[] subMenu : loadables) {
-                    load.getItems().add(new MenuItem(subMenu[0]+" "+subMenu[1]));
+                    dbload.getItems().add(new MenuItem(subMenu[0] + " " + subMenu[1]));
                 }
             }
 
         } catch (DaoException e) {
             e.printStackTrace();
         }
-    }
-
-    public void setStage(Stage stage) {
-        this.stage = stage;
     }
 
     private void reinitializeBoard() {
@@ -182,14 +216,29 @@ public class MainView implements Initializable {
         }
     }
 
-    public void saveGame() {
+    public void saveGame() throws DaoException {
         SudokuBoardDaoFactory factory = new SudokuBoardDaoFactory();
         if (sudokuBoard != null) {
             factory.getFileDao("sudoku").write(sudokuBoard);
         }
     }
 
-    public void loadGame() throws IOException {
+    public void loadGame() throws DaoException {
+        SudokuBoardDaoFactory factory = new SudokuBoardDaoFactory();
+        sudokuBoard = (SudokuBoard) factory.getFileDao("sudoku").read();
+        reinitializeBoard();
+    }
+
+    public void dbsaveGame() throws SudokuException {
+        //zapytaj o nazwe
+        String name = "default";
+        SudokuBoardDaoFactory factory = new SudokuBoardDaoFactory();
+        if (sudokuBoard != null) {
+            factory.getDatabaseDao(name).write(sudokuBoard);
+        }
+    }
+
+    public void dbloadGame() throws SudokuException {
         SudokuBoardDaoFactory factory = new SudokuBoardDaoFactory();
         sudokuBoard = (SudokuBoard) factory.getFileDao("sudoku").read();
         reinitializeBoard();
@@ -221,5 +270,75 @@ public class MainView implements Initializable {
         load.setText(bundle.getString("load"));
         language.setText(bundle.getString("language"));
         verifyButton.setText(bundle.getString("verifyButton"));
+    }
+
+    public void loadFromDbAction(ActionEvent actionEvent) throws IOException {
+        URL location = getClass().getResource("/pl/compprog/gui/DbLoadDialogue.fxml");
+        FXMLLoader fxmlLoader = new FXMLLoader(location);
+        fxmlLoader.setResources(ResourceBundle.getBundle("i18n.SudokuBundle", new Locale("en", "EN")));
+        Parent root = fxmlLoader.load();
+
+        Scene secondScene = new Scene(root);
+        // New window (Stage)
+        Stage newWindow = new Stage();
+        newWindow.setTitle(bundle.getString("db_load_dialogue"));
+        newWindow.setScene(secondScene);
+        // Specifies the modality for new window.
+        newWindow.initModality(Modality.WINDOW_MODAL);
+        // Specifies the owner Window (parent) for new window
+        newWindow.initOwner(stage);
+        // Set position of second window, related to primary window.
+        newWindow.setX(stage.getX() + 50);
+        newWindow.setY(stage.getY() + 200);
+        newWindow.show();
+    }
+
+    @SuppressWarnings("Duplicates")
+    public void saveToDbAction(ActionEvent actionEvent) throws IOException {
+        URL location = getClass().getResource("/pl/compprog/gui/DbSaveDialogue.fxml");
+        FXMLLoader fxmlLoader = new FXMLLoader(location);
+        fxmlLoader.setResources(ResourceBundle.getBundle("i18n.SudokuBundle", new Locale("en", "EN")));
+        Parent root = fxmlLoader.load();
+
+        Scene secondScene = new Scene(root);
+        // New window (Stage)
+        Stage newWindow = new Stage();
+        newWindow.setTitle(bundle.getString("db_save_dialogue"));
+        newWindow.setScene(secondScene);
+        // Specifies the modality for new window.
+        newWindow.initModality(Modality.WINDOW_MODAL);
+        // Specifies the owner Window (parent) for new window
+        newWindow.initOwner(stage);
+        // Set position of second window, related to primary window.
+        newWindow.setX(stage.getX() + 50);
+        newWindow.setY(stage.getY() + 200);
+        newWindow.show();
+    }
+
+    @SuppressWarnings("Duplicates")
+    public void deleteFromDbAction(ActionEvent actionEvent) throws IOException {
+        URL location = getClass().getResource("/pl/compprog/gui/DbDeleteDialogue.fxml");
+        FXMLLoader fxmlLoader = new FXMLLoader(location);
+        fxmlLoader.setResources(ResourceBundle.getBundle("i18n.SudokuBundle", new Locale("en", "EN")));
+        Parent root = fxmlLoader.load();
+        Scene secondScene = new Scene(root);
+        // New window (Stage)
+        Stage newWindow = new Stage();
+        newWindow.setTitle(bundle.getString("db_delete_dialogue"));
+        newWindow.setScene(secondScene);
+        // Specifies the modality for new window.
+        newWindow.initModality(Modality.WINDOW_MODAL);
+        // Specifies the owner Window (parent) for new window
+        newWindow.initOwner(stage);
+        // Set position of second window, related to primary window.
+        newWindow.setX(stage.getX() + 50);
+        newWindow.setY(stage.getY() + 200);
+        newWindow.show();
+    }
+
+
+
+    public ResourceBundle getCurrentBundle() {
+        return bundle;
     }
 }

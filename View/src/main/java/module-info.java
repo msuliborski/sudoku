@@ -5,4 +5,6 @@ open module ViewProject {
     requires java.base;
     requires javafx.controls;
     requires javafx.graphics;
+    requires java.logging;
+    requires java.sql;
 }
