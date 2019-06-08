@@ -43,14 +43,14 @@ public class MainView implements Initializable {
     public Menu file;
     public MenuItem save;
     public MenuItem load;
-    public Menu databse;
+    public Menu database;
     public MenuItem dbsave;
     public Menu dbload;
     public Menu language;
     private static final String BUNDLE_NAME = "interfaceLanguage";
     private List<List<TextField>> boardTextFields = new ArrayList<>();
     private SimpleIntegerProperty[][] boardIntegerProperties = new SimpleIntegerProperty[9][9];
-    private static boolean isEnglish = true;
+    public static boolean isEnglish = true;
     ResourceBundle bundle;
 
 
@@ -264,7 +264,7 @@ public class MainView implements Initializable {
         updateNames();
     }
 
-    void updateNames() {
+    public void updateNames() {
 
         if (isEnglish) {
             bundle = ResourceBundle.getBundle(BUNDLE_NAME);
@@ -282,6 +282,22 @@ public class MainView implements Initializable {
         verifyButton.setText(bundle.getString("verifyButton"));
     }
 
+    @SuppressWarnings("Duplicates")
+    public void openSaveWindow () throws IOException {
+//        URL location = getClass().getResource("/pl/compprog/gui/DbSaveDialogue.fxml");
+////        FXMLLoader fxmlLoader = new FXMLLoader(location);
+////        fxmlLoader.setResources(ResourceBundle.getBundle(BUNDLE_NAME, new Locale("en")));
+////        Parent root = fxmlLoader.load();
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("DbSaveDialogue.fxml"));
+
+        Parent root = fxmlLoader.load();
+        Stage stage = new Stage();
+        stage.setTitle(bundle.getString("saveDialogue"));
+        stage.setScene(new Scene(root));
+        stage.show();
+    }
+
+    @SuppressWarnings("Duplicates")
     public void loadFromDbAction(ActionEvent actionEvent) throws IOException {
         URL location = getClass().getResource("/pl/compprog/gui/DbLoadDialogue.fxml");
         FXMLLoader fxmlLoader = new FXMLLoader(location);

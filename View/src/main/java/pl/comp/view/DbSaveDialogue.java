@@ -23,20 +23,18 @@ public class DbSaveDialogue implements Initializable {
     public TextField saveNameField;
     public Button saveDbButton;
     private final Logger logger = FileAndConsoleLoggerFactory.getConfiguredLogger(DbSaveDialogue.class.getName());
-    private final ResourceBundle messagesBundle = ResourceBundle.getBundle("pl.compprog.messages");
-
-    private Locale englishLocale = new Locale("en", "EN");
-    private ResourceBundle englishBundle = ResourceBundle.getBundle("i18n.SudokuBundle", englishLocale);
-    private ResourceBundle polishBundle = ResourceBundle.getBundle("i18n.SudokuBundle");
-    private ResourceBundle currentBundle = englishBundle;
+    private static final String BUNDLE_NAME = "interfaceLanguage";
+    private ResourceBundle bundle;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        saveNameField.setPromptText(MainView.getInstance().getCurrentBundle().getString("save_name"));
-        saveDbButton.setText(MainView.getInstance().getCurrentBundle().getString("save"));
+        if(MainView.isEnglish)
+            bundle = ResourceBundle.getBundle(BUNDLE_NAME);
+        else
+            bundle = ResourceBundle.getBundle(BUNDLE_NAME, new Locale("pl"));
+        saveNameField.setPromptText(bundle.getString("saveName"));
+        saveDbButton.setText(bundle.getString("saveButton"));
     }
-
-    private enum Language {ENGLISH, POLISH}
 
     private boolean isBoardEmpty(SudokuBoard boardToTest) {
         for(int i = 0; i < 9; i++) {
@@ -49,19 +47,12 @@ public class DbSaveDialogue implements Initializable {
         return true;
     }
 
-    public void saveToDb(ActionEvent actionEvent) {
-        SudokuBoardDaoFactory sudokuBoardDaoFactory = new SudokuBoardDaoFactory();
-        if (!saveNameField.getText().equals("") && !isBoardEmpty(MainView.getSudokuBoard())) {
-            try (JdbcSudokuBoardDao dao = (JdbcSudokuBoardDao) sudokuBoardDaoFactory.getDatabaseDao(saveNameField.getText())) {
-                dao.write(MainView.getSudokuBoard());
-            } catch (SudokuException aex) {
-                logger.log(Level.SEVERE, messagesBundle.getString(DaoException.MISSING_FILE), aex);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-
-            Stage stage = (Stage) saveDbButton.getScene().getWindow();
-            stage.close();
+    public void saveToDb(ActionEvent actionEvent) throws SudokuException {
+        String name = saveNameField.getText();
+        SudokuBoardDaoFactory factory = new SudokuBoardDaoFactory();
+        if (MainView.getSudokuBoard() != null) {
+            factory.getDatabaseDao(name).write(MainView.getSudokuBoard());
+            MainView.getInstance().getLoadableBoards();
         }
     }
 }
