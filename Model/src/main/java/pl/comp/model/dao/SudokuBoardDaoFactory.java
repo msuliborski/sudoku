@@ -4,11 +4,11 @@ import pl.comp.model.exceptions.DaoException;
 
 public class SudokuBoardDaoFactory {
 
-    public Dao getFileDao(String fileName) throws DaoException {
+    public Dao getFileDao(final String fileName) throws DaoException {
         return new FileSudokuBoardDao(fileName);
     }
 
-    public final Dao getDatabaseDao(String name) throws DaoException {
+    public final Dao getDatabaseDao(final String name) throws DaoException {
         return new JdbcSudokuBoardDao(name);
     }
 }

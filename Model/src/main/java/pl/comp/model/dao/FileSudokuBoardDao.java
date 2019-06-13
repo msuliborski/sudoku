@@ -9,7 +9,7 @@ public class FileSudokuBoardDao implements Dao<SudokuBoard>, AutoCloseable{
 
     private String fileName;
 
-    FileSudokuBoardDao(String name) throws DaoException {
+    FileSudokuBoardDao(final String name) throws DaoException {
         if (name == null) {
             throw new DaoException(DaoException.NULL_NAME);
         }
@@ -28,7 +28,7 @@ public class FileSudokuBoardDao implements Dao<SudokuBoard>, AutoCloseable{
     }
 
     @Override
-    public void write(SudokuBoard obj) throws DaoException {
+    public void write(final SudokuBoard obj) throws DaoException {
         if (obj == null) {
             throw new DaoException(DaoException.NULL_BOARD);
         }

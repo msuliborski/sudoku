@@ -39,13 +39,14 @@ public class SudokuField implements Serializable, Comparable<SudokuField>, Clone
     }
 
     @Override
-    public int hashCode() {return new HashCodeBuilder(17, 37)
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
             .append(value)
             .toHashCode();
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (o == this) {
             return true;
         }
@@ -64,12 +65,12 @@ public class SudokuField implements Serializable, Comparable<SudokuField>, Clone
     }
 
     @Override
-    public int compareTo(SudokuField field) {
+    public int compareTo(final SudokuField field) {
         return Integer.compare(field.value, value);
     }
 
     @Override
-    public Object clone() throws CloneNotSupportedException{
+    public Object clone() throws CloneNotSupportedException {
         return super.clone();
     }
 

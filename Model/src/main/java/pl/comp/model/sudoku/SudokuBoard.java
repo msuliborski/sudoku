@@ -38,7 +38,7 @@ public class SudokuBoard implements Serializable, Cloneable {
         fillSudoku(difficulty);
     }
 
-    private void initialize(){
+    private void initialize() {
         var boxes = new ArrayList<SudokuBox>(9);
         var columns = new ArrayList<SudokuColumn>(9);
         var rows = new ArrayList<SudokuRow>(9);
@@ -89,15 +89,15 @@ public class SudokuBoard implements Serializable, Cloneable {
         board.get(x).get(y).setFieldValue(value);
     }
 
-    public SudokuField getField(int x, int y){
+    public SudokuField getField(int x, int y) {
         return board.get(x).get(y);
     }
 
-    public boolean isFieldDefault(int x, int y){
+    public boolean isFieldDefault(int x, int y) {
         return board.get(x).get(y).isDefault();
     }
 
-    public void setFieldDefault(int x, int y, boolean def){
+    public void setFieldDefault(int x, int y, boolean def) {
         board.get(x).get(y).setDefault(def);
     }
 
@@ -123,7 +123,7 @@ public class SudokuBoard implements Serializable, Cloneable {
         Random rand = new Random();
 
         for (int i = 0; i < amount; i++) {
-            int index = rand.nextInt(list.size()-1);
+            int index = rand.nextInt(list.size() - 1);
 
             int x = list.get(index).x;
             int y = list.get(index).y;
@@ -181,7 +181,6 @@ public class SudokuBoard implements Serializable, Cloneable {
         return sb.toString();
     }
 
-
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
@@ -191,7 +190,7 @@ public class SudokuBoard implements Serializable, Cloneable {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
 
         if (o == this) {
             return true;
@@ -220,20 +219,6 @@ public class SudokuBoard implements Serializable, Cloneable {
 
     @Override
     public Object clone() {
-//        SudokuBoard sudokuBoard = (SudokuBoard) super.clone();
-//
-//        for (int x = 0; x < 9; x++) {
-//            for (int y = 0; y < 9; y++) {
-//                sudokuBoard.board.getFieldValue(x).setFieldValue(y, (SudokuField) this.board.getFieldValue(x).getFieldValue(y).clone());
-//            }
-//        }
-//
-//        for (int i = 0; i < 9; i++) {
-//            sudokuBoard.verifiers.setFieldValue(i, (Verifier) this.verifiers.getFieldValue(i).clone());
-//        }
-//
-//        return sudokuBoard;
-
         byte[] object;
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
              ObjectOutputStream oos = new ObjectOutputStream(baos)) {

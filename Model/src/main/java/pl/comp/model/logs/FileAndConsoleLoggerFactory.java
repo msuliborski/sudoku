@@ -8,9 +8,9 @@ public class FileAndConsoleLoggerFactory {
 
     private static boolean loggerConfigured = false;
 
-    public static Logger getConfiguredLogger(String name) {
+    public static Logger getConfiguredLogger(final String name) {
         if (!loggerConfigured) {
-            try(InputStream stream = FileAndConsoleLoggerFactory.class.getResourceAsStream("/logging.properties")) {
+            try (InputStream stream = FileAndConsoleLoggerFactory.class.getResourceAsStream("/logging.properties")) {
                 LogManager.getLogManager().readConfiguration(stream);
                 loggerConfigured = true;
             } catch (IOException e) {

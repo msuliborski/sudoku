@@ -38,7 +38,7 @@ public class Verifier implements Serializable, Cloneable {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
 
         if (o == this) {
             return true;
@@ -63,7 +63,7 @@ public class Verifier implements Serializable, Cloneable {
     }
 
     @Override
-    public int hashCode(){
+    public int hashCode() {
         return new HashCodeBuilder(17, 37)
                 .append(fields)
                 .append(addCounter)
@@ -71,9 +71,9 @@ public class Verifier implements Serializable, Cloneable {
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         StringBuilder sb = new StringBuilder();
-        for(int i = 0; i < 9; i++){
+        for (int i = 0; i < 9; i++) {
             sb.append(fields.get(i));
         }
         sb.append(", counter = ").append(addCounter);
@@ -82,12 +82,6 @@ public class Verifier implements Serializable, Cloneable {
 
     @Override
     public Object clone() {
-//        Verifier field = (Verifier) super.clone();
-//        for(int i = 0; i < this.fields.size(); i++){
-//            field.fields.add((SudokuField) this.fields.getFieldValue(i).clone());
-//        }
-//        return field;
-
         byte[] object;
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
              ObjectOutputStream oos = new ObjectOutputStream(baos)) {
@@ -99,14 +93,12 @@ public class Verifier implements Serializable, Cloneable {
         }
 
         try (ByteArrayInputStream bais = new ByteArrayInputStream(object);
-             ObjectInputStream ois = new ObjectInputStream(bais);) {
+             ObjectInputStream ois = new ObjectInputStream(bais)) {
 
             return ois.readObject();
         } catch (IOException | ClassNotFoundException cnfe) {
             cnfe.printStackTrace();
             return null;
         }
-
     }
-
 }

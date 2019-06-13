@@ -23,7 +23,7 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard>, AutoCloseable {
     static {
         try {
             Class.forName(DRIVER);
-        } catch(ClassNotFoundException cnfex) {
+        } catch (ClassNotFoundException cnfex) {
             logger.log(SEVERE, DaoException.NO_JDBC_DRIVER, cnfex);
         }
     }
@@ -57,7 +57,7 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard>, AutoCloseable {
 
     private String boardName;
 
-    public JdbcSudokuBoardDao(String name) throws DaoException {
+    public JdbcSudokuBoardDao(final String name) throws DaoException {
 
         if (name == null) {
             throw new DaoException(DaoException.NULL_NAME);
@@ -77,7 +77,7 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard>, AutoCloseable {
     @Override
     public SudokuBoard read() throws DaoException {
         try {
-            logger.log(Level.INFO, "Read sudoku '"+ boardName +"' from database.");
+            logger.log(Level.INFO, "Read sudoku '" + boardName + "' from database.");
             SudokuBoard sudokuBoard = new SudokuBoard();
             preparedStatement = connection.prepareStatement(READ_QUERY_FIELD);
             preparedStatement.setString(1, boardName);
@@ -95,8 +95,8 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard>, AutoCloseable {
     }
 
     @Override
-    public void write(SudokuBoard sudokuBoard) throws DaoException {
-        logger.log(Level.INFO, "Write sudoku '"+ boardName +"' to database.");
+    public void write(final SudokuBoard sudokuBoard) throws DaoException {
+        logger.log(Level.INFO, "Write sudoku '" + boardName + "' to database.");
 
         if (sudokuBoard == null) {
             throw new DaoException(DaoException.NULL_BOARD);
@@ -137,7 +137,7 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard>, AutoCloseable {
     }
 
     public void delete() throws DaoException {
-        logger.log(Level.INFO, "Delete sudoku '"+ boardName +"' from database.");
+        logger.log(Level.INFO, "Delete sudoku '" + boardName + "' from database.");
         try {
             preparedStatement = connection.prepareStatement(DELETE_QUERY_BOARD);
             preparedStatement.setString(1, boardName);

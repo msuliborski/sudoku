@@ -14,6 +14,8 @@
     <version>0.5</version>
 	<packaging>jar</packaging>
 
+    <name>${project.artifactId}-${project.version}</name>
+
     <dependencies>
         <dependency>
             <groupId>pl.comp.model</groupId>
