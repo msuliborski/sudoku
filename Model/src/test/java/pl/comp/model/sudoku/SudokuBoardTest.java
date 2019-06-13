@@ -98,4 +98,10 @@ public class SudokuBoardTest {
         assertNotSame(sudokuBoard1, sudokuBoard2);
         assertNotEquals(sudokuBoard1, sudokuBoard2);
     }
+
+    @Test
+    public void testIfSudokuGenerationWorks() {
+        SudokuBoard sudokuBoard = new SudokuBoard(1);
+        assertTrue(sudokuBoard.verify());
+    }
 }

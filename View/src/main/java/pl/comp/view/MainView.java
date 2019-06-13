@@ -12,11 +12,13 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import javafx.util.converter.NumberStringConverter;
 import pl.comp.model.exceptions.DaoException;
+import pl.comp.model.logs.FileAndConsoleLoggerFactory;
+import pl.comp.model.solvers.BacktrackingSudokuSolver;
+import pl.comp.model.solvers.SudokuSolver;
 import pl.comp.model.sudoku.SudokuBoard;
 import pl.comp.model.dao.SudokuBoardDaoFactory;
 
@@ -26,8 +28,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class MainView implements Initializable {
+
+    private final Logger logger = FileAndConsoleLoggerFactory.getConfiguredLogger(DbSaveDialogue.class.getName());
 
     private static SudokuBoard sudokuBoard;
     private Stage stage;
@@ -166,6 +172,7 @@ public class MainView implements Initializable {
 
     public void startGame(int difficulty) {
         sudokuBoard = new SudokuBoard(difficulty);
+        logger.log(Level.INFO, sudokuBoard.toString());
         reinitializeBoard();
         verifyButton.setText(bundle.getString("verifyButton"));
         verifyButton.setTextFill(Color.BLACK);
@@ -192,13 +199,7 @@ public class MainView implements Initializable {
 
     public void saveGame() throws DaoException {
         SudokuBoardDaoFactory factory = new SudokuBoardDaoFactory();
-        if (sudokuBoard != null) {
-            try {
-                factory.getFileDao("sudoku").write(sudokuBoard);
-            } catch (DaoException e) {
-                e.printStackTrace();
-            }
-        }
+        factory.getFileDao("sudoku").write(sudokuBoard);
     }
 
     public void loadGame() throws DaoException {
