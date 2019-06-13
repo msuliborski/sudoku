@@ -171,11 +171,5 @@ public class JdbcSudokuBoardDao implements Dao<SudokuBoard>, AutoCloseable {
     @Override
     public void close() {
     }
-
-    @Override
-    public final void finalize() throws Exception {
-        close();
-    }
-
 }
 
