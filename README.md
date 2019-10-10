@@ -21,7 +21,7 @@ $ git clone https://github.com/msuliborski/sudoku
 ### Building
 
 ```
-$ cd image-manipulator
+$ cd sudoku
 $ mvn install
 ```
 
