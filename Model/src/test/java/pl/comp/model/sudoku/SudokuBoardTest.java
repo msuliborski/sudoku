@@ -1,11 +1,11 @@
 package pl.comp.model.sudoku;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import pl.comp.model.dao.FileSudokuBoardDao;
 import pl.comp.model.dao.SudokuBoardDaoFactory;
 import pl.comp.model.exceptions.DaoException;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SudokuBoardTest {
 

@@ -7,6 +7,7 @@ import javafx.scene.Parent;
 import javafx.stage.Stage;
 
 import java.net.URL;
+import pl.comp.view.MainView;
 
 public class MainApp extends Application {
 

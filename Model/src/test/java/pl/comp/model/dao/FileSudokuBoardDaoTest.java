@@ -1,6 +1,6 @@
 package pl.comp.model.dao;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import pl.comp.model.exceptions.DaoException;
 import pl.comp.model.logs.FileAndConsoleLoggerFactory;
 import pl.comp.model.solvers.BacktrackingSudokuSolver;
